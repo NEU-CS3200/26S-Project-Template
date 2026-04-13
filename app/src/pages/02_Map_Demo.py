@@ -1,12 +1,15 @@
 import logging
+
 logger = logging.getLogger(__name__)
-import streamlit as st
+from urllib.error import URLError
+
 import pandas as pd
 import pydeck as pdk
-from urllib.error import URLError
+import streamlit as st
+
 from modules.nav import SideBarLinks
 
-st.set_page_config(layout='wide')
+st.set_page_config(layout="wide")
 
 SideBarLinks()
 
@@ -24,7 +27,7 @@ to display geospatial data."""
 def from_data_file(filename):
     url = (
         "http://raw.githubusercontent.com/streamlit/"
-        "example-data/master/hello/v1/%s" % filename
+        f"example-data/master/hello/v1/{filename}"
     )
     return pd.read_json(url)
 
@@ -94,9 +97,8 @@ try:
         st.error("Please choose at least one layer above.")
 except URLError as e:
     st.error(
-        """
+        f"""
         **This demo requires internet access.**
-        Connection error: %s
+        Connection error: {e.reason}
     """
-        % e.reason
     )

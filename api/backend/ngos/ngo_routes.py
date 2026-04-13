@@ -1,6 +1,7 @@
-from flask import Blueprint, jsonify, request, current_app
-from backend.db_connection import get_db
+from flask import Blueprint, current_app, jsonify, request
 from mysql.connector import Error
+
+from backend.db_connection import get_db
 
 # Create a Blueprint for NGO routes
 ngos = Blueprint("ngos", __name__)
@@ -12,7 +13,7 @@ ngos = Blueprint("ngos", __name__)
 def get_all_ngos():
     cursor = get_db().cursor(dictionary=True)
     try:
-        current_app.logger.info('GET /ngo/ngos')
+        current_app.logger.info("GET /ngo/ngos")
 
         # Query parameters are added after the main part of the URL.
         # Example: http://localhost:4000/ngo/ngos?founding_year=1971
@@ -37,10 +38,10 @@ def get_all_ngos():
         cursor.execute(query, params)
         ngo_list = cursor.fetchall()
 
-        current_app.logger.info(f'Retrieved {len(ngo_list)} NGOs')
+        current_app.logger.info(f"Retrieved {len(ngo_list)} NGOs")
         return jsonify(ngo_list), 200
     except Error as e:
-        current_app.logger.error(f'Database error in get_all_ngos: {e}')
+        current_app.logger.error(f"Database error in get_all_ngos: {e}")
         return jsonify({"error": str(e)}), 500
     finally:
         cursor.close()
@@ -90,16 +91,21 @@ def create_ngo():
             INSERT INTO WorldNGOs (Name, Country, Founding_Year, Focus_Area, Website)
             VALUES (%s, %s, %s, %s, %s)
         """
-        cursor.execute(query, (
-            data["Name"],
-            data["Country"],
-            data["Founding_Year"],
-            data["Focus_Area"],
-            data["Website"],
-        ))
+        cursor.execute(
+            query,
+            (
+                data["Name"],
+                data["Country"],
+                data["Founding_Year"],
+                data["Focus_Area"],
+                data["Website"],
+            ),
+        )
 
         get_db().commit()
-        return jsonify({"message": "NGO created successfully", "ngo_id": cursor.lastrowid}), 201
+        return jsonify(
+            {"message": "NGO created successfully", "ngo_id": cursor.lastrowid}
+        ), 201
     except Error as e:
         return jsonify({"error": str(e)}), 500
     finally:

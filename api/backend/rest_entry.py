@@ -1,18 +1,19 @@
-from flask import Flask
-from dotenv import load_dotenv
-import os
 import logging
+import os
+
+from dotenv import load_dotenv
+from flask import Flask
 
 from backend.db_connection import init_app as init_db
-from backend.simple.simple_routes import simple_routes
 from backend.ngos.ngo_routes import ngos
+from backend.simple.simple_routes import simple_routes
 
 
 def create_app():
     app = Flask(__name__)
 
     app.logger.setLevel(logging.DEBUG)
-    app.logger.info('API startup')
+    app.logger.info("API startup")
 
     # Load environment variables from the .env file so they are
     # accessible via os.getenv() below.

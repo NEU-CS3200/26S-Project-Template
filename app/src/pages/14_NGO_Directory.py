@@ -1,8 +1,9 @@
-import streamlit as st
 import requests
+import streamlit as st
+
 from modules.nav import SideBarLinks
 
-st.set_page_config(layout='wide')
+st.set_page_config(layout="wide")
 
 # Initialize sidebar
 SideBarLinks()
@@ -28,10 +29,10 @@ try:
 
         # Create filters
         with col1:
-            selected_country = st.selectbox("Filter by Country", ["All"] + countries)
+            selected_country = st.selectbox("Filter by Country", ["All", *countries])
 
         with col2:
-            selected_focus = st.selectbox("Filter by Focus Area", ["All"] + focus_areas)
+            selected_focus = st.selectbox("Filter by Focus Area", ["All", *focus_areas])
 
         with col3:
             selected_year = st.selectbox(
@@ -80,5 +81,5 @@ try:
         st.error("Failed to fetch NGO data from the API")
 
 except requests.exceptions.RequestException as e:
-    st.error(f"Error connecting to the API: {str(e)}")
+    st.error(f"Error connecting to the API: {e!s}")
     st.info("Please ensure the API server is running on http://web-api:4000")
