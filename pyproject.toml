@@ -1,0 +1,72 @@
+[project]
+name = "hoopspot"
+version = "0.1.0"
+requires-python = ">=3.11"
+description = "CS 3200 Spring 2026 Project - HoopSpot"
+dependencies = [
+    # API (Flask)
+    "flask==2.3.3",
+    "mysql-connector-python==8.4.0",
+    "cryptography==42.0.8",
+    "python-dotenv==1.0.1",
+    "numpy==1.26.4",
+    # App (Streamlit)
+    "altair",
+    "pandas",
+    "streamlit",
+    "streamlit-extras",
+    "world-bank-data",
+    "matplotlib",
+    "pydeck",
+    "requests",
+    "plotly",
+    "scikit-learn",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff",
+]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 88
+# Python source directories
+src = ["api", "app/src", "ml-src"]
+# Only lint/format project code, not vendored or generated files
+extend-exclude = [
+    ".venv",
+    "datasets",
+    "database-files",
+]
+
+[tool.ruff.lint]
+select = [
+    "F",     # Pyflakes
+    "E",     # pycodestyle errors
+    "W",     # pycodestyle warnings
+    "I",     # isort (import sorting)
+    "N",     # pep8-naming
+    "UP",    # pyupgrade
+    "B",     # flake8-bugbear
+    "SIM",   # flake8-simplify
+    "RUF",   # Ruff-specific rules
+]
+ignore = [
+    "E501",    # line too long (handled by formatter)
+    "RUF067",  # __init__ module exports — project uses logic in __init__.py
+]
+
+# Streamlit pages use top-level st.set_page_config() before other imports,
+# and the template uses PascalCase for some public functions (SideBarLinks).
+[tool.ruff.lint.per-file-ignores]
+"app/src/pages/*.py" = ["E402"]
+"app/src/Home.py" = ["E402"]
+"app/src/modules/nav.py" = ["N802", "RUF001", "SIM102"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["backend", "modules"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
