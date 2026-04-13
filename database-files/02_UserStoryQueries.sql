@@ -32,7 +32,7 @@ ORDER BY ActivePlayerCount DESC;
 -- Story 2:
 -- Check in at a court.
 INSERT INTO CheckIn (CheckInId, CheckInTime, CheckOutTime, PlayerId, CourtId)
-VALUES (7, '2026-04-06 18:10:00', NULL, 1, 1);
+VALUES (1001, '2026-04-06 18:10:00', NULL, 1, 1);
 
 -- Story 3:
 -- Filter courts by skill level.
@@ -75,7 +75,7 @@ INSERT INTO CourtReview (ReviewId,
                          ReviewDate,
                          PlayerId,
                          CourtId)
-VALUES (5,
+VALUES (1001,
         4.2,
         4.0,
         'Solid court, good rims, and enough space for pickup games.',
@@ -187,7 +187,7 @@ INSERT INTO Court (CourtId,
                    IsOpen,
                    IsActive,
                    NeighborhoodId)
-VALUES (5,
+VALUES (33,
         'South End Community Courts',
         '75 Tremont St, Boston, MA',
         42.342100,
@@ -199,16 +199,16 @@ VALUES (5,
         '7 AM - 10 PM',
         TRUE,
         TRUE,
-        1);
+        4);
 
 INSERT INTO CourtAmenity (CourtId, AmenityId)
-VALUES (5, 1);
+VALUES (33, 1);
 
 INSERT INTO CourtAmenity (CourtId, AmenityId)
-VALUES (5, 2);
+VALUES (33, 2);
 
 INSERT INTO CourtAmenity (CourtId, AmenityId)
-VALUES (5, 4);
+VALUES (33, 4);
 
 -- Story 2:
 -- Mark a court as inactive.
@@ -268,19 +268,19 @@ DELETE
 FROM MatchParticipation
 WHERE MatchId IN (SELECT MatchId
                   FROM TournamentMatch
-                  WHERE TournamentId = 2);
+                  WHERE TournamentId = 16);
 
 DELETE
 FROM TournamentMatch
-WHERE TournamentId = 2;
+WHERE TournamentId = 16;
 
 DELETE
 FROM TournamentRegistration
-WHERE TournamentId = 2;
+WHERE TournamentId = 16;
 
 DELETE
 FROM Tournament
-WHERE TournamentId = 2;
+WHERE TournamentId = 16;
 
 -- =========================================================
 -- Persona 4: Data Analyst
