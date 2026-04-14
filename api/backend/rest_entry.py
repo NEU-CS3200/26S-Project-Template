@@ -5,8 +5,10 @@ from dotenv import load_dotenv
 from flask import Flask
 
 from backend.db_connection import init_app as init_db
-from backend.ngos.ngo_routes import ngos
-from backend.simple.simple_routes import simple_routes
+from backend.courts.court_routes import courts
+from backend.players.player_routes import players
+from backend.tournaments.tournament_routes import tournaments_bp
+from backend.analytics.analytics_routes import analytics
 
 
 def create_app():
@@ -36,7 +38,9 @@ def create_app():
     # Register the routes from each Blueprint with the app object
     # and give a url prefix to each.
     app.logger.info("create_app(): registering blueprints")
-    app.register_blueprint(simple_routes)
-    app.register_blueprint(ngos, url_prefix="/ngo")
+    app.register_blueprint(courts,         url_prefix="/court")
+    app.register_blueprint(players,        url_prefix="/player")
+    app.register_blueprint(tournaments_bp, url_prefix="/tournament")
+    app.register_blueprint(analytics,      url_prefix="/analytics")
 
     return app
