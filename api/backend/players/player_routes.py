@@ -101,9 +101,17 @@ def update_player(player_id):
         data = request.get_json()
 
         # Build update query dynamically based on provided fields
-        allowed_fields = ["Username", "Email", "Position", "Height",
-                          "PreferredCourtType", "SkillRating",
-                          "ZipCode", "IsActive", "IsFlagged"]
+        allowed_fields = [
+            "Username",
+            "Email",
+            "Position",
+            "Height",
+            "PreferredCourtType",
+            "SkillRating",
+            "ZipCode",
+            "IsActive",
+            "IsFlagged",
+        ]
         update_fields = [f"{f} = %s" for f in allowed_fields if f in data]
         params = [data[f] for f in allowed_fields if f in data]
 
@@ -200,7 +208,9 @@ def checkin():
         )
         get_db().commit()
 
-        return jsonify({"message": "Checked in successfully", "CheckInId": cursor.lastrowid}), 201
+        return jsonify(
+            {"message": "Checked in successfully", "CheckInId": cursor.lastrowid}
+        ), 201
     except Error as e:
         current_app.logger.error(f"Database error in checkin: {e}")
         return jsonify({"error": str(e)}), 500

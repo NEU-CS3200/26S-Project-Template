@@ -38,9 +38,9 @@ def create_app():
     # Register the routes from each Blueprint with the app object
     # and give a url prefix to each.
     app.logger.info("create_app(): registering blueprints")
-    app.register_blueprint(courts,         url_prefix="/court")
-    app.register_blueprint(players,        url_prefix="/player")
+    app.register_blueprint(courts, url_prefix="/court")
+    app.register_blueprint(players, url_prefix="/player")
     app.register_blueprint(tournaments_bp, url_prefix="/tournament")
-    app.register_blueprint(analytics,      url_prefix="/analytics")
+    app.register_blueprint(analytics, url_prefix="/analytics")
 
     return app

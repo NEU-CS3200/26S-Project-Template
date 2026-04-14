@@ -140,7 +140,9 @@ def get_tournament(tournament_id):
 def register_player(tournament_id):
     cursor = get_db().cursor(dictionary=True)
     try:
-        current_app.logger.info(f"POST /tournament/tournaments/{tournament_id}/register")
+        current_app.logger.info(
+            f"POST /tournament/tournaments/{tournament_id}/register"
+        )
         data = request.get_json()
 
         if "PlayerId" not in data:

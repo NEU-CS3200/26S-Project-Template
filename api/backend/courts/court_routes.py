@@ -127,9 +127,18 @@ def create_court():
         current_app.logger.info("POST /court/courts")
         data = request.get_json()
 
-        required_fields = ["CourtName", "Address", "Latitude", "Longitude",
-                           "SkillLevel", "CourtType", "SurfaceType",
-                           "HoopCount", "Hours", "NeighborhoodId"]
+        required_fields = [
+            "CourtName",
+            "Address",
+            "Latitude",
+            "Longitude",
+            "SkillLevel",
+            "CourtType",
+            "SurfaceType",
+            "HoopCount",
+            "Hours",
+            "NeighborhoodId",
+        ]
         for field in required_fields:
             if field not in data:
                 return jsonify({"error": f"Missing required field: {field}"}), 400
@@ -164,7 +173,9 @@ def create_court():
             )
 
         get_db().commit()
-        return jsonify({"message": "Court created successfully", "CourtId": new_court_id}), 201
+        return jsonify(
+            {"message": "Court created successfully", "CourtId": new_court_id}
+        ), 201
     except Error as e:
         current_app.logger.error(f"Database error in create_court: {e}")
         return jsonify({"error": str(e)}), 500
@@ -183,9 +194,18 @@ def update_court(court_id):
         data = request.get_json()
 
         # Build update query dynamically based on provided fields
-        allowed_fields = ["CourtName", "Address", "Hours", "SurfaceType",
-                          "HoopCount", "SkillLevel", "CourtType",
-                          "IsOpen", "IsActive", "NeighborhoodId"]
+        allowed_fields = [
+            "CourtName",
+            "Address",
+            "Hours",
+            "SurfaceType",
+            "HoopCount",
+            "SkillLevel",
+            "CourtType",
+            "IsOpen",
+            "IsActive",
+            "NeighborhoodId",
+        ]
         update_fields = [f"{f} = %s" for f in allowed_fields if f in data]
         params = [data[f] for f in allowed_fields if f in data]
 
@@ -271,7 +291,9 @@ def create_review(court_id):
         )
         get_db().commit()
 
-        return jsonify({"message": "Review submitted successfully", "ReviewId": cursor.lastrowid}), 201
+        return jsonify(
+            {"message": "Review submitted successfully", "ReviewId": cursor.lastrowid}
+        ), 201
     except Error as e:
         current_app.logger.error(f"Database error in create_review: {e}")
         return jsonify({"error": str(e)}), 500
