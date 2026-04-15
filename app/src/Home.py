@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 # as SideBarLinks function from src/modules folder
 import streamlit as st
 from modules.nav import SideBarLinks
+from Style import apply_bold_button_styles
 
 # streamlit supports regular and wide layout (how the controls
 # are organized/displayed on the screen).
@@ -33,40 +34,72 @@ SideBarLinks(show_home=True)
 # ***************************************************
 
 logger.info("Loading the Home page of the app")
-st.title('CS 3200 Project Template')
-st.write('#### Hi! As which user would you like to log in?')
+st.title('Husky League')
+st.write('#### Hi! What would you like to log in as?')
 
 # For each of the user personas for which we are implementing
 # functionality, we put a button on the screen that the user
 # can click to MIMIC logging in as that mock user.
 
-if st.button("Act as John, a Political Strategy Advisor",
+apply_bold_button_styles()
+
+if st.button("Act as Maya, a Soccer and Volleyball Player",
              type='primary',
              use_container_width=True):
+    
     # when user clicks the button, they are now considered authenticated
     st.session_state['authenticated'] = True
+
     # we set the role of the current user
-    st.session_state['role'] = 'pol_strat_advisor'
+    st.session_state['role'] = 'player_persona'
+
     # we add the first name of the user (so it can be displayed on
     # subsequent pages).
-    st.session_state['first_name'] = 'John'
+    st.session_state['first_name'] = 'Maya'
+
     # finally, we ask streamlit to switch to another page, in this case, the
     # landing page for this particular user type
-    logger.info("Logging in as Political Strategy Advisor Persona")
-    st.switch_page('pages/00_Pol_Strat_Home.py')
+    logger.info("Logging in as Player Persona")
+    st.switch_page('pages/player_browse_profile.py')
 
-if st.button('Act as Mohammad, a USAID Worker',
-             type='primary',
+if st.button("Act as Allan, the Team Captain",
+             type="primary",
              use_container_width=True):
+    
     st.session_state['authenticated'] = True
-    st.session_state['role'] = 'usaid_worker'
-    st.session_state['first_name'] = 'Mohammad'
-    st.switch_page('pages/10_USAID_Worker_Home.py')
 
-if st.button('Act as System Administrator',
-             type='primary',
+    st.session_state['role'] = 'coach_persona'
+
+    st.session_state['first_name'] = 'Allan'
+
+    logger.info("Logging in as Coach Persona")
+
+    st.switch_page('pages/coach_form_team.py')
+
+if st.button("Act as Derrick, the League Administrator",
+             type="primary",
              use_container_width=True):
+    
     st.session_state['authenticated'] = True
-    st.session_state['role'] = 'administrator'
-    st.session_state['first_name'] = 'SysAdmin'
-    st.switch_page('pages/20_Admin_Home.py')
+
+    st.session_state['role'] = 'league_administrator_persona'
+
+    st.session_state['first_name'] = 'Derrick'
+
+    logger.info("Logging in as League Administrator Persona")
+
+    st.switch_page('pages/league_admin_venue_schedule.py')
+
+if st.button("Act as Dr. Priya, the Sports Analyst",
+             type="primary",
+             use_container_width=True):
+    
+    st.session_state['authenticated'] = True
+
+    st.session_state['role'] = 'sports_analyst_persona'
+
+    st.session_state['first_name'] = 'Dr. Priya'
+
+    logger.info("Logging in as Sports Analyst Persona")
+
+    st.switch_page('pages/analyst_intramural_report.py')

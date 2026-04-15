@@ -6,83 +6,42 @@ import streamlit as st
 
 
 # ---- General ----------------------------------------------------------------
+def add_space():
+    st.sidebar.markdown("<br>", unsafe_allow_html=True)  # adds space
+
+def add_line_break():
+    st.sidebar.markdown("""
+        <hr style="margin: 4px 0;">
+    """, unsafe_allow_html=True)
 
 def home_nav():
     st.sidebar.page_link("Home.py", label="Home", icon="🏠")
 
+def player_persona_nav():
+    st.sidebar.page_link("pages/player_browse_profile.py", label="My Profile", icon="🔎")
+    st.sidebar.page_link("pages/player_browse_leagues.py", label="Browse Leagues", icon="🔎")
+    st.sidebar.page_link("pages/player_browse_scheduled_games.py", label="Schedule", icon="🔎")
 
-def about_page_nav():
-    st.sidebar.page_link("pages/30_About.py", label="About", icon="🧠")
+def coach_persona_nav():
+    st.sidebar.page_link("pages/coach_team_dashboard.py", label="My Team", icon="🔎")
+    st.sidebar.page_link("pages/coach_manage_team.py", label="Manage Team", icon="🔎")
+    st.sidebar.page_link("pages/coach_form_team.py", label="Make New Team", icon="🔎")
 
+def league_administrator_nav():
+    st.sidebar.page_link("pages/league_admin_venue_schedule.py", label="Venue Schedule", icon="🔎")
+    st.sidebar.page_link("pages/league_admin_manage_league.py", label="Manage Leagues", icon="🔎")
+    st.sidebar.page_link("pages/league_admin_disputes.py", label="Manage Disputes", icon="🔎")
 
-# ---- Role: pol_strat_advisor ------------------------------------------------
+def analyst_nav():
+    st.sidebar.page_link("pages/analyst_intramural_report.py", label="Intramural Report", icon="🔎")
+    st.sidebar.page_link("pages/analyst_venue_report.py", label="Venue Report", icon="🔎")
+    st.sidebar.page_link("pages/analyst_team_report.py", label="Team Report", icon="🔎")
 
-def pol_strat_home_nav():
-    st.sidebar.page_link(
-        "pages/00_Pol_Strat_Home.py", label="Political Strategist Home", icon="👤"
-    )
+def SideBarLinks(show_home=False, userAuthStatus=None):
 
-
-def world_bank_viz_nav():
-    st.sidebar.page_link(
-        "pages/01_World_Bank_Viz.py", label="World Bank Visualization", icon="🏦"
-    )
-
-
-def map_demo_nav():
-    st.sidebar.page_link("pages/02_Map_Demo.py", label="Map Demonstration", icon="🗺️")
-
-
-# ---- Role: usaid_worker -----------------------------------------------------
-
-def usaid_worker_home_nav():
-    st.sidebar.page_link(
-        "pages/10_USAID_Worker_Home.py", label="USAID Worker Home", icon="🏠"
-    )
-
-
-def ngo_directory_nav():
-    st.sidebar.page_link("pages/14_NGO_Directory.py", label="NGO Directory", icon="📁")
-
-
-def add_ngo_nav():
-    st.sidebar.page_link("pages/15_Add_NGO.py", label="Add New NGO", icon="➕")
-
-
-def prediction_nav():
-    st.sidebar.page_link(
-        "pages/11_Prediction.py", label="Regression Prediction", icon="📈"
-    )
-
-
-def api_test_nav():
-    st.sidebar.page_link("pages/12_API_Test.py", label="Test the API", icon="🛜")
-
-
-def classification_nav():
-    st.sidebar.page_link(
-        "pages/13_Classification.py", label="Classification Demo", icon="🌺"
-    )
-
-
-# ---- Role: administrator ----------------------------------------------------
-
-def admin_home_nav():
-    st.sidebar.page_link("pages/20_Admin_Home.py", label="System Admin", icon="🖥️")
-
-
-def ml_model_mgmt_nav():
-    st.sidebar.page_link(
-        "pages/21_ML_Model_Mgmt.py", label="ML Model Management", icon="🏢"
-    )
-
-
-# ---- Sidebar assembly -------------------------------------------------------
-
-def SideBarLinks(show_home=False):
-    """
-    Renders sidebar navigation links based on the logged-in user's role.
-    The role is stored in st.session_state when the user logs in on Home.py.
+    """ 
+        Renders sidebar navigation links based on the logged-in user's role.
+        The role is stored in st.session_state when the user logs in on Home.py.
     """
 
     # Logo appears at the top of the sidebar on every page
@@ -94,29 +53,37 @@ def SideBarLinks(show_home=False):
         st.switch_page("Home.py")
 
     if show_home:
+        add_space()
         home_nav()
 
-    if st.session_state["authenticated"]:
+    if userAuthStatus == "player_persona":
+        add_space()
+        home_nav()
+        add_line_break()
+        player_persona_nav()
+        add_space()
+        
+    if userAuthStatus == "coach_persona":
+        add_space()
+        home_nav()
+        add_line_break()
+        coach_persona_nav()
+        add_space()
 
-        if st.session_state["role"] == "pol_strat_advisor":
-            pol_strat_home_nav()
-            world_bank_viz_nav()
-            map_demo_nav()
-
-        if st.session_state["role"] == "usaid_worker":
-            usaid_worker_home_nav()
-            ngo_directory_nav()
-            add_ngo_nav()
-            prediction_nav()
-            api_test_nav()
-            classification_nav()
-
-        if st.session_state["role"] == "administrator":
-            admin_home_nav()
-            ml_model_mgmt_nav()
-
-    # About link appears at the bottom for all roles
-    about_page_nav()
+    if userAuthStatus == "league_admin_persona":
+        add_space()
+        home_nav()
+        add_line_break()
+        league_administrator_nav()
+        add_space() 
+    
+    if userAuthStatus == "analyst_persona":
+        add_space()
+        home_nav()
+        add_line_break()
+        analyst_nav()
+        add_space() 
+        
 
     if st.session_state["authenticated"]:
         if st.sidebar.button("Logout"):
