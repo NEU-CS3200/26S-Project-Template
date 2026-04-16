@@ -5,7 +5,6 @@ import streamlit as st
 st.set_page_config(layout="wide", page_title="HoopSpot - Court Finder")
 
 import pandas as pd
-import pydeck as pdk
 import requests
 
 from modules.nav import SideBarLinks
@@ -127,19 +126,16 @@ with filter_cols[0]:
     skill_filter = st.selectbox(
         "Skill Level",
         ["All Levels", "Beginner", "Intermediate", "Advanced"],
-        label_visibility="collapsed",
     )
 with filter_cols[1]:
     type_filter = st.selectbox(
         "Court Type",
         ["All", "Outdoor", "Indoor"],
-        label_visibility="collapsed",
     )
 with filter_cols[2]:
     sort_by = st.selectbox(
-        "Sort",
+        "Sort By",
         ["Most Active", "Court Name"],
-        label_visibility="collapsed",
     )
 with filter_cols[3]:
     search_query = st.text_input(
@@ -177,52 +173,31 @@ else:
     # -- Map ----------------------------------------------------------------
     with map_col:
         df = pd.DataFrame(courts)
-        df["lat"] = df["Latitude"].astype(float)
-        df["lon"] = df["Longitude"].astype(float)
+        df["latitude"] = df["Latitude"].astype(float)
+        df["longitude"] = df["Longitude"].astype(float)
         df["players"] = df["ActivePlayerCount"].astype(int)
 
-        # Color: green when players are active, gray when empty
-        def row_color(row):
+        # Size scales with player count
+        df["size"] = df["players"].apply(lambda p: max(20, min(100, 20 + p * 12)))
+
+        # Color based on activity
+        def hex_color(row):
             if row["players"] > 5:
-                return [34, 197, 94, 200]  # green
+                return "#22c55e"  # green
             if row["players"] > 0:
-                return [59, 130, 246, 200]  # blue
-            return [156, 163, 175, 160]  # gray
+                return "#3b82f6"  # blue
+            return "#9ca3af"  # gray
 
-        df["color"] = df.apply(row_color, axis=1)
-        # Radius scales with player count (min 60, max 200)
-        df["radius"] = df["players"].apply(lambda p: max(60, min(200, 60 + p * 20)))
+        df["color"] = df.apply(hex_color, axis=1)
 
-        center_lat = df["lat"].mean()
-        center_lon = df["lon"].mean()
-
-        layer = pdk.Layer(
-            "ScatterplotLayer",
-            data=df,
-            get_position=["lon", "lat"],
-            get_radius="radius",
-            get_fill_color="color",
-            pickable=True,
-            auto_highlight=True,
+        st.map(
+            df,
+            latitude="latitude",
+            longitude="longitude",
+            size="size",
+            color="color",
+            zoom=11,
         )
-
-        view_state = pdk.ViewState(
-            latitude=center_lat,
-            longitude=center_lon,
-            zoom=12,
-            pitch=0,
-        )
-
-        deck = pdk.Deck(
-            layers=[layer],
-            initial_view_state=view_state,
-            tooltip={
-                "text": "{CourtName}\n{players} active players",
-            },
-            map_style="mapbox://styles/mapbox/light-v11",
-        )
-
-        st.pydeck_chart(deck, use_container_width=True, height=480)
 
         st.caption("🟢 5+ players  🔵 1-5 players  ⚪ Empty")
 
