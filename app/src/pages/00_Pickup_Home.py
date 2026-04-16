@@ -24,8 +24,6 @@ SideBarLinks()
 player_id = st.session_state.get("player_id", 1)
 first_name = st.session_state.get("first_name", "Marcus")
 
-if "selected_court" not in st.session_state:
-    st.session_state["selected_court"] = None
 if "active_checkin_id" not in st.session_state:
     st.session_state["active_checkin_id"] = None
 if "checked_in_court_id" not in st.session_state:
@@ -69,6 +67,16 @@ def fetch_player(pid):
     except requests.RequestException as e:
         logger.error(f"Failed to fetch player {pid}: {e}")
         return None
+
+
+def fetch_court_reviews(court_id):
+    try:
+        resp = requests.get(f"{API_BASE}/court/courts/{court_id}/reviews", timeout=5)
+        resp.raise_for_status()
+        return resp.json()
+    except requests.RequestException as e:
+        logger.error(f"Failed to fetch reviews for court {court_id}: {e}")
+        return []
 
 
 def do_checkin(pid, court_id):
@@ -142,6 +150,61 @@ with filter_cols[3]:
         "Search",
         placeholder="Search courts...",
     )
+
+# ---------------------------------------------------------------------------
+# Court detail dialog
+# ---------------------------------------------------------------------------
+
+
+@st.dialog("Court Details", width="large")
+def show_court_dialog(court_id):
+    detail = fetch_court_detail(court_id)
+    if not detail:
+        st.error("Could not load court details.")
+        return
+
+    st.subheader(detail["CourtName"])
+    info_cols = st.columns(4)
+    info_cols[0].metric("Hoops", detail.get("HoopCount", "?"))
+    info_cols[1].metric("Surface", detail.get("SurfaceType", "?"))
+    info_cols[2].metric("Type", detail.get("CourtType", "?"))
+    info_cols[3].metric("Skill", detail.get("SkillLevel", "?"))
+
+    st.caption(
+        f"📍 {detail.get('Address', '')} · "
+        f"{detail.get('NeighborhoodName', '')} · "
+        f"Hours: {detail.get('Hours', 'N/A')}"
+    )
+
+    amenities = detail.get("amenities", [])
+    if amenities:
+        st.markdown("**Amenities:** " + " · ".join(a["AmenityName"] for a in amenities))
+
+    # -- Reviews --------------------------------------------------------------
+    reviews = fetch_court_reviews(court_id)
+    if reviews:
+        avg_rating = sum(r["Rating"] for r in reviews) / len(reviews)
+        avg_condition = sum(r["ConditionRating"] for r in reviews) / len(reviews)
+
+        st.markdown("---")
+        rev_cols = st.columns(3)
+        rev_cols[0].metric("Avg Rating", f"{avg_rating:.1f} / 5")
+        rev_cols[1].metric("Court Condition", f"{avg_condition:.1f} / 5")
+        rev_cols[2].metric("Reviews", len(reviews))
+
+        st.markdown("**Recent Reviews**")
+        for review in reviews[:5]:
+            filled = round(review["Rating"])
+            stars = "★" * filled + "☆" * (5 - filled)
+            comment = review.get("Comment", "")
+            st.markdown(
+                f"**{review.get('Username', 'Anonymous')}** {stars}  \n{comment}"
+                if comment
+                else f"**{review.get('Username', 'Anonymous')}** {stars}"
+            )
+    else:
+        st.caption("No reviews yet.")
+
 
 # ---------------------------------------------------------------------------
 # Fetch and filter courts
@@ -268,41 +331,10 @@ else:
                             else:
                                 st.error("Check-in failed. Try again.")
 
-                    # Detail expander button
+                    # Detail dialog button
                     if st.button(
                         "Details",
                         key=f"detail_{court_id}",
                         use_container_width=True,
                     ):
-                        st.session_state["selected_court"] = court_id
-                        st.rerun()
-
-# ---------------------------------------------------------------------------
-# Court detail panel
-# ---------------------------------------------------------------------------
-if st.session_state.get("selected_court"):
-    st.markdown("---")
-    detail = fetch_court_detail(st.session_state["selected_court"])
-    if detail:
-        st.subheader(detail["CourtName"])
-        info_cols = st.columns(4)
-        info_cols[0].metric("Hoops", detail.get("HoopCount", "?"))
-        info_cols[1].metric("Surface", detail.get("SurfaceType", "?"))
-        info_cols[2].metric("Type", detail.get("CourtType", "?"))
-        info_cols[3].metric("Skill", detail.get("SkillLevel", "?"))
-
-        st.caption(
-            f"📍 {detail.get('Address', '')} · "
-            f"{detail.get('NeighborhoodName', '')} · "
-            f"Hours: {detail.get('Hours', 'N/A')}"
-        )
-
-        amenities = detail.get("amenities", [])
-        if amenities:
-            st.markdown(
-                "**Amenities:** " + " · ".join(a["AmenityName"] for a in amenities)
-            )
-
-        if st.button("Close", key="close_detail"):
-            st.session_state["selected_court"] = None
-            st.rerun()
+                        show_court_dialog(court_id)
