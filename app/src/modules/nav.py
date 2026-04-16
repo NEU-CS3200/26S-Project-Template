@@ -104,9 +104,6 @@ def SideBarLinks(show_home=False):
             admin_home_nav()
             ml_model_mgmt_nav()
 
-    # About link appears at the bottom for all roles
-    about_page_nav()
-
     if st.session_state["authenticated"]:
         if st.sidebar.button("Logout"):
             del st.session_state["role"]
