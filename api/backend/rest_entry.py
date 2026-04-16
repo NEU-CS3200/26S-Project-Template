@@ -6,6 +6,11 @@ import logging
 from backend.db_connection import init_app as init_db
 from backend.simple.simple_routes import simple_routes
 from backend.ngos.ngo_routes import ngos
+from backend.payoutProfiles.payout_routes import payout_profiles
+from backend.assets.asset_routes import assets
+from backend.audiovate_routes.artists.artist_routes import artists
+from backend.audiovate_routes.users.user_routes import users
+from backend.audiovate_routes.releases.release_routes import releases
 
 
 def create_app():
@@ -37,5 +42,10 @@ def create_app():
     app.logger.info("create_app(): registering blueprints")
     app.register_blueprint(simple_routes)
     app.register_blueprint(ngos, url_prefix="/ngo")
+    app.register_blueprint(payout_profiles, url_prefix="/payoutProfiles")
+    app.register_blueprint(assets, url_prefix="/assets")
+    app.register_blueprint(artists)
+    app.register_blueprint(users)
+    app.register_blueprint(releases)
 
     return app

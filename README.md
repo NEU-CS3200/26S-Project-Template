@@ -9,7 +9,7 @@ It includes most of the infrastructure setup (containers), sample databases, and
 - A GitHub Account
 - A terminal-based git client or GUI Git client such as GitHub Desktop or the Git plugin for VSCode.
 - A distribution of Python running on your laptop. The distribution supported by the course is [Anaconda](https://www.anaconda.com/download) or [Miniconda](https://www.anaconda.com/docs/getting-started/miniconda/install).
-  - Create a new Python 3.11 environment in `conda` named `db-proj` by running:  
+  - Create a new Python 3.11 environment in `conda` named `db-proj` by running:
      ```bash
      conda create -n db-proj python=3.11
      ```
@@ -23,7 +23,7 @@ It includes most of the infrastructure setup (containers), sample databases, and
      Note that the `..` means go to the parent folder of the folder you're currently in (which is `api/` after the first command).
      > **Why install locally if everything runs in Docker?** Installing the packages locally lets your IDE (VSCode) provide autocompletion, linting, and error highlighting as you write code. The app itself always runs inside the Docker containers — the local install is just for editor support.
 - VSCode with the Python Plugin installed
-  - You may use some other Python/code editor.  However, Course staff will only support VS Code. 
+  - You may use some other Python/code editor.  However, Course staff will only support VS Code.
 
 
 ## Structure of the Repo
@@ -44,7 +44,7 @@ If you are not familiar with web app development, this code base might be confus
 1. Start by exploring the `./app` directory. This is where the Streamlit app is located. The Streamlit app is a Python-based web app that is used to interact with the user. It's a great way to build a simple web app without having to learn a lot of web development.
 1. Next, explore the `./api` directory. This is where the Flask REST API is located. The REST API is used to interact with the database and perform other server-side tasks. You might also consider this the "application logic" or "business logic" layer of your app. 
 1. Finally, explore the `./database-files` directory. This is where the SQL scripts are located that will be used to initialize the MySQL database.
-1. Bonus: If you want to have a totally separate copy of the Template Repo on your laptop that you can use to explore and try things without messing up your team repo, see *Setting Up a Personal Testing Repo (Optional)* section below. 
+1. Bonus: If you want to have a totally separate copy of the Template Repo on your laptop that you can use to explore and try things without messing up your team repo, see *Setting Up a Personal Testing Repo (Optional)* section below.
 
 ## Setting Up the Repos
 <details>
@@ -91,7 +91,7 @@ If you are not familiar with web app development, this code base might be confus
 
 ## Important Tips
 
-1. In general, any changes you make to the api code base (REST API) or the Streamlit app code should be *hot reloaded* when the files are saved.  This means that the changes should be immediately available.  
+1. In general, any changes you make to the api code base (REST API) or the Streamlit app code should be *hot reloaded* when the files are saved.  This means that the changes should be immediately available. 
    1. Don't forget to click the **Always Rerun** button in the browser tab of the Streamlit app for it to reload with changes.
    1. Sometimes, a bug in the code will shut the containers down.  If this is the case, try and fix the bug in the code.  Then you can restart the `app` container in Docker Desktop or restart all the containers with `docker compose restart` (no *-d* flag).
 1. The MySQL Container is different. 

@@ -23,7 +23,7 @@ services:
 
   db:
     env_file:
-      - ./api/.env
+      - ./api/.env.audiovate
     image: mysql:9
     container_name: mysql_db
     hostname: db
