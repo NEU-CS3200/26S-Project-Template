@@ -141,7 +141,6 @@ with filter_cols[3]:
     search_query = st.text_input(
         "Search",
         placeholder="Search courts...",
-        label_visibility="collapsed",
     )
 
 # ---------------------------------------------------------------------------
