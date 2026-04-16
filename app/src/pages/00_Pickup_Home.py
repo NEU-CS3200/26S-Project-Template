@@ -252,7 +252,8 @@ else:
 
         df["color"] = df.apply(hex_color, axis=1)
 
-        st.map(
+        map_container = st.empty()
+        map_container.map(
             df,
             latitude="latitude",
             longitude="longitude",
@@ -261,7 +262,18 @@ else:
             zoom=11,
         )
 
-        st.caption("🟢 5+ players  🔵 1-5 players  ⚪ Empty")
+        legend_col, btn_col = st.columns([3, 1])
+        legend_col.caption("🟢 5+ players  🔵 1-5 players  ⚪ Empty")
+        if btn_col.button("Re-center", use_container_width=True):
+            map_container.empty()
+            map_container.map(
+                df,
+                latitude="latitude",
+                longitude="longitude",
+                size="size",
+                color="color",
+                zoom=11,
+            )
 
     # -- Court list ---------------------------------------------------------
     with list_col:
