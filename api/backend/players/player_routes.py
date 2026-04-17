@@ -184,6 +184,106 @@ def get_leaderboard():
         cursor.close()
 
 
+# Get the player's most recent games with court + result info (Pickup Player Profile)
+# Optional: ?limit=10 to cap results (defaults to 10)
+# Example: /player/players/1/recent-games
+@players.route("/players/<int:player_id>/recent-games", methods=["GET"])
+def get_recent_games(player_id):
+    cursor = get_db().cursor(dictionary=True)
+    try:
+        current_app.logger.info(f"GET /player/players/{player_id}/recent-games")
+
+        limit = request.args.get("limit", default=10, type=int)
+        limit = max(1, min(limit, 50))
+
+        cursor.execute(
+            """
+            SELECT g.GameId,
+                   g.GameDate,
+                   g.GameType,
+                   c.CourtId,
+                   c.CourtName,
+                   gp.Result,
+                   gp.Score
+            FROM GameParticipation gp
+                JOIN Game g  ON g.GameId  = gp.GameId
+                JOIN Court c ON c.CourtId = g.CourtId
+            WHERE gp.PlayerId = %s
+            ORDER BY g.GameDate DESC
+            LIMIT %s
+            """,
+            (player_id, limit),
+        )
+        return jsonify(cursor.fetchall()), 200
+    except Error as e:
+        current_app.logger.error(f"Database error in get_recent_games: {e}")
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+
+
+# Derive a skill-score trend from a player's game history (Pickup Player Profile)
+# The schema stores a single current SkillRating per player, so we synthesize a
+# trajectory by walking their games in chronological order and applying a small
+# delta per win/loss that ends on the player's current rating * 1000 (display).
+# Example: /player/players/1/skill-history
+@players.route("/players/<int:player_id>/skill-history", methods=["GET"])
+def get_skill_history(player_id):
+    cursor = get_db().cursor(dictionary=True)
+    try:
+        current_app.logger.info(f"GET /player/players/{player_id}/skill-history")
+
+        cursor.execute(
+            "SELECT SkillRating FROM Player WHERE PlayerId = %s",
+            (player_id,),
+        )
+        row = cursor.fetchone()
+        if not row:
+            return jsonify({"error": "Player not found"}), 404
+        current_rating = float(row["SkillRating"] or 0)
+
+        cursor.execute(
+            """
+            SELECT g.GameDate, gp.Result
+            FROM GameParticipation gp
+                JOIN Game g ON g.GameId = gp.GameId
+            WHERE gp.PlayerId = %s
+            ORDER BY g.GameDate ASC
+            """,
+            (player_id,),
+        )
+        games = cursor.fetchall()
+
+        # Display skill score = rating * 1000 (e.g. 4.5 -> 4500; demo rank ~1240)
+        win_delta = 18
+        loss_delta = 12
+        net_delta = sum(
+            win_delta if (g["Result"] or "").lower() == "win" else -loss_delta
+            for g in games
+        )
+        start_score = round(current_rating * 1000) - net_delta
+
+        history = []
+        running = start_score
+        for g in games:
+            running += (
+                win_delta if (g["Result"] or "").lower() == "win" else -loss_delta
+            )
+            history.append(
+                {
+                    "GameDate": g["GameDate"].isoformat() if g["GameDate"] else None,
+                    "SkillScore": running,
+                }
+            )
+
+        return jsonify(history), 200
+    except Error as e:
+        current_app.logger.error(f"Database error in get_skill_history: {e}")
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+
+
 # Check in at a court (Pickup Player User Story 2)
 # Required fields: PlayerId, CourtId
 # Example: POST /player/checkins

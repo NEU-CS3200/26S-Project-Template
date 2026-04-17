@@ -22,6 +22,10 @@ def pickup_home_nav():
     st.sidebar.page_link("pages/00_Pickup_Home.py", label="Court Finder", icon="🏀")
 
 
+def pickup_profile_nav():
+    st.sidebar.page_link("pages/01_Pickup_Profile.py", label="Profile", icon="👤")
+
+
 # ---- Role: usaid_worker -----------------------------------------------------
 
 
@@ -91,6 +95,7 @@ def SideBarLinks(show_home=False):
     if st.session_state["authenticated"]:
         if st.session_state["role"] == "pickup_player":
             pickup_home_nav()
+            pickup_profile_nav()
 
         if st.session_state["role"] == "usaid_worker":
             usaid_worker_home_nav()
