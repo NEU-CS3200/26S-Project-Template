@@ -289,7 +289,7 @@ WITH RECURSIVE seq AS (
     FROM seq
     WHERE n < 72
 ),
-generated AS (
+gen AS (
     SELECT n,
            DATE_ADD(
                DATE_ADD(
@@ -310,7 +310,7 @@ SELECT n,
        END,
        PlayerId,
        CourtId
-FROM generated;
+FROM gen;
 
 INSERT INTO CourtReview (
     ReviewId, Rating, ConditionRating, Comment, IsFlagged, ReviewDate, PlayerId, CourtId
@@ -415,6 +415,98 @@ SELECT g.GameId,
 FROM games g
 CROSS JOIN slots s;
 
+-- ---------------------------------------------------------------------------
+-- Mock data: Marcus Reyes (PlayerId 1) for the Pickup Profile dashboard.
+-- The profile page defaults to PlayerId=1 / first_name="Marcus" and expects
+-- rich history. Rebrand seed player 1 to Marcus Reyes (Roxbury), then insert
+-- 42 additional games across Jan-Apr 2026 so stat cards, skill-trend chart,
+-- and recent-games list all render with meaningful data. Loss positions are
+-- tuned so Marcus lands on 29W / 18L (47 games total, matches wireframe).
+-- ---------------------------------------------------------------------------
+UPDATE Player
+SET Username = 'marcus.reyes',
+    Email = 'marcus.reyes@example.com',
+    NeighborhoodId = 9,
+    ZipCode = '02119',
+    RegistrationDate = '2025-10-15'
+WHERE PlayerId = 1;
+
+INSERT INTO Game (GameId, GameDate, GameType, MinSkillRating, CourtId)
+WITH RECURSIVE seq AS (
+    SELECT 37 AS n
+    UNION ALL
+    SELECT n + 1
+    FROM seq
+    WHERE n < 78
+)
+SELECT n,
+       DATE_ADD(
+           DATE_ADD('2026-01-03 00:00:00', INTERVAL (n - 37) * 60 HOUR),
+           INTERVAL (17 + (n MOD 4)) HOUR
+       ),
+       ELT(1 + (n MOD 4), 'Pickup 5v5', '3v3 Half Court', 'King of the Court', 'Open Run'),
+       ROUND(3.0 + ((n MOD 5) * 0.3), 1),
+       ((n * 3) MOD 32) + 1
+FROM seq;
+
+-- Marcus's participation across the new games. Losses cluster earlier so the
+-- synthesized skill-score chart trends upward: 26 wins + 16 losses here, plus
+-- the 3W / 2L from earlier seeded rows, lands at 29W / 18L over 47 games.
+INSERT INTO GameParticipation (GameId, PlayerId, Result, Score)
+WITH RECURSIVE seq AS (
+    SELECT 37 AS GameId
+    UNION ALL
+    SELECT GameId + 1
+    FROM seq
+    WHERE GameId < 78
+)
+SELECT GameId,
+       1,
+       CASE
+           WHEN GameId IN (38, 41, 43, 45, 47, 49, 50,
+                           52, 55, 58, 61, 64,
+                           67, 71, 74, 78) THEN 'Loss'
+           ELSE 'Win'
+       END,
+       CASE
+           WHEN GameId IN (38, 41, 43, 45, 47, 49, 50,
+                           52, 55, 58, 61, 64,
+                           67, 71, 74, 78) THEN 6 + (GameId MOD 5)
+           ELSE 10 + (GameId MOD 5)
+       END
+FROM seq;
+
+-- Fill each of Marcus's new games with a teammate + two opponents so the
+-- participation rows aren't lopsided. PlayerId formula never collides with
+-- Marcus (lands in [2, 36]) and produces distinct players within each game.
+INSERT INTO GameParticipation (GameId, PlayerId, Result, Score)
+WITH RECURSIVE seq AS (
+    SELECT 37 AS GameId
+    UNION ALL
+    SELECT GameId + 1
+    FROM seq
+    WHERE GameId < 78
+),
+roster AS (
+    SELECT 1 AS Slot
+    UNION ALL
+    SELECT Slot + 1
+    FROM roster
+    WHERE Slot < 3
+)
+SELECT s.GameId,
+       ((s.GameId * 7 + r.Slot * 5) MOD 35) + 2,
+       CASE
+           WHEN s.GameId IN (38, 41, 43, 45, 47, 49, 50,
+                             52, 55, 58, 61, 64,
+                             67, 71, 74, 78)
+                THEN CASE WHEN r.Slot = 1 THEN 'Loss' ELSE 'Win' END
+           ELSE CASE WHEN r.Slot = 1 THEN 'Win' ELSE 'Loss' END
+       END,
+       5 + ((s.GameId + r.Slot) MOD 8)
+FROM seq s
+CROSS JOIN roster r;
+
 INSERT INTO Tournament (
     TournamentId, TournamentName, StartDate, EndDate, Status, Winner, CourtId
 ) VALUES
@@ -479,7 +571,7 @@ WITH RECURSIVE seq AS (
     FROM seq
     WHERE MatchId < 64
 ),
-generated AS (
+gen AS (
     SELECT MatchId,
            ((MatchId - 4) MOD 15) + 1 AS TournamentId,
            CASE ((MatchId - 4) MOD 4)
@@ -504,7 +596,7 @@ SELECT g.MatchId,
            ELSE 'Scheduled'
        END,
        g.TournamentId
-FROM generated g
+FROM gen g
 JOIN Tournament t
     ON t.TournamentId = g.TournamentId;
 
