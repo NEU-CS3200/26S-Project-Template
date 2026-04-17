@@ -81,9 +81,6 @@ def SideBarLinks(show_home=False):
     The role is stored in st.session_state when the user logs in on Home.py.
     """
 
-    # Logo appears at the top of the sidebar on every page
-    st.sidebar.image("assets/logo.png", width=150)
-
     # If no one is logged in, send them to the Home (login) page
     if "authenticated" not in st.session_state:
         st.session_state.authenticated = False
