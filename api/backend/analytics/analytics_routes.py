@@ -213,8 +213,8 @@ def export_checkins():
 
 
 # Get active user count and average skill rating grouped by ZIP code (Data Analyst User Story 6)
-# Example: /analytics/users/zipcode
-@analytics.route("/users/zipcode", methods=["GET"])
+# Example: /analytics/users-by-zip
+@analytics.route("/users-by-zip", methods=["GET"])
 def users_by_zipcode():
     cursor = get_db().cursor(dictionary=True)
     try:
