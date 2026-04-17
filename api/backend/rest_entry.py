@@ -6,6 +6,14 @@ import logging
 from backend.db_connection import init_app as init_db
 from backend.simple.simple_routes import simple_routes
 from backend.ngos.ngo_routes import ngos
+from backend.blueprints.analytics import analytics
+from backend.blueprints.games import games
+from backend.blueprints.leagues import leagues
+from backend.blueprints.players import players
+from backend.blueprints.teams import teams
+from backend.blueprints.team_members import team_members
+from backend.blueprints.venues import venues
+from backend.blueprints.notifications import notifications
 
 
 def create_app():
@@ -37,5 +45,13 @@ def create_app():
     app.logger.info("create_app(): registering blueprints")
     app.register_blueprint(simple_routes)
     app.register_blueprint(ngos, url_prefix="/ngo")
+    app.register_blueprint(analytics)
+    app.register_blueprint(games)
+    app.register_blueprint(leagues)
+    app.register_blueprint(players)
+    app.register_blueprint(teams)
+    app.register_blueprint(team_members)
+    app.register_blueprint(venues)
+    app.register_blueprint(notifications)
 
     return app
