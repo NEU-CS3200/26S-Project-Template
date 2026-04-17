@@ -340,8 +340,8 @@ def show_court_dialog(court_id):
     # -- Reviews --------------------------------------------------------------
     reviews = fetch_court_reviews(court_id)
     if reviews:
-        avg_rating = sum(r["Rating"] for r in reviews) / len(reviews)
-        avg_condition = sum(r["ConditionRating"] for r in reviews) / len(reviews)
+        avg_rating = sum(float(r["Rating"]) for r in reviews) / len(reviews)
+        avg_condition = sum(float(r["ConditionRating"]) for r in reviews) / len(reviews)
 
         st.markdown("---")
         rev_cols = st.columns(3)
@@ -351,7 +351,7 @@ def show_court_dialog(court_id):
 
         st.markdown("**Recent Reviews**")
         for review in reviews[:5]:
-            filled = round(review["Rating"])
+            filled = round(float(review["Rating"]))
             stars_html = (
                 f'<span style="color:#F97316;">{"★" * filled}</span>'
                 f'<span style="color:#334155;">{"★" * (5 - filled)}</span>'
