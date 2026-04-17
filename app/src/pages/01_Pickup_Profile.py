@@ -24,43 +24,44 @@ SideBarLinks()
 # Page-specific CSS — editorial sports-profile feel
 # ---------------------------------------------------------------------------
 PAGE_CSS = """
-.block-container { padding-top: 2.5rem !important; max-width: 1100px; }
+.block-container { padding-top: 3.5rem !important; max-width: 1400px; }
 
-/* Profile hero */
+/* Profile hero — horizontal compact layout */
 .profile-hero {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    gap: 0.6rem;
-    padding: 2rem 1rem 1.5rem;
+    gap: 1.15rem;
+    padding: 0.6rem 0.25rem;
     position: relative;
+    height: 100%;
 }
 .profile-hero::before {
     content: "";
     position: absolute;
-    inset: 0;
+    inset: -12px -28px;
     background:
-        radial-gradient(800px 260px at 50% 0%,
-            rgba(249,115,22,0.10) 0%,
-            rgba(249,115,22,0.0) 60%);
+        radial-gradient(380px 180px at 22% 50%,
+            rgba(249,115,22,0.09) 0%,
+            rgba(249,115,22,0.0) 65%);
     pointer-events: none;
     z-index: 0;
 }
 .profile-hero > * { position: relative; z-index: 1; }
+.hero-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.28rem;
+    min-width: 0;
+}
 
 .avatar-ring {
-    width: 124px;
-    height: 124px;
+    width: 88px;
+    height: 88px;
+    flex-shrink: 0;
     border-radius: 50%;
-    padding: 3px;
-    background: conic-gradient(
-        from 160deg,
-        #F97316 0%,
-        #FB923C 30%,
-        rgba(249,115,22,0.15) 55%,
-        #F97316 100%
-    );
-    box-shadow: 0 10px 40px rgba(249,115,22,0.25);
+    padding: 2.5px;
+    background: #F97316;
 }
 .avatar-inner {
     width: 100%;
@@ -71,7 +72,7 @@ PAGE_CSS = """
     align-items: center;
     justify-content: center;
     font-family: 'Outfit', sans-serif;
-    font-size: 2.6rem;
+    font-size: 1.8rem;
     font-weight: 700;
     letter-spacing: -0.04em;
     color: #F1F5F9;
@@ -80,16 +81,19 @@ PAGE_CSS = """
 
 .profile-name {
     font-family: 'Outfit', sans-serif;
-    font-size: 2.25rem;
+    font-size: 1.65rem;
     font-weight: 700;
     letter-spacing: -0.035em;
     color: #F1F5F9;
-    margin: 0.5rem 0 0 0;
-    line-height: 1.1;
+    margin: 0;
+    line-height: 1.05;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .profile-location {
     font-family: 'Outfit', sans-serif;
-    font-size: 0.9rem;
+    font-size: 0.82rem;
     color: #64748B;
     font-weight: 400;
     letter-spacing: 0.01em;
@@ -97,8 +101,8 @@ PAGE_CSS = """
 .rank-pill {
     display: inline-flex;
     align-items: center;
-    gap: 0.45rem;
-    padding: 0.35rem 0.95rem;
+    gap: 0.4rem;
+    padding: 0.28rem 0.75rem;
     border-radius: 999px;
     background: linear-gradient(135deg,
         rgba(249,115,22,0.18) 0%,
@@ -106,14 +110,15 @@ PAGE_CSS = """
     border: 1px solid rgba(249,115,22,0.3);
     color: #FB923C;
     font-family: 'Outfit', sans-serif;
-    font-size: 0.78rem;
+    font-size: 0.7rem;
     font-weight: 600;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    margin-top: 0.25rem;
+    margin-top: 0.1rem;
+    align-self: flex-start;
 }
 .rank-pill .rank-dot {
-    width: 6px; height: 6px; border-radius: 50%;
+    width: 5px; height: 5px; border-radius: 50%;
     background: #F97316;
     box-shadow: 0 0 8px #F97316;
 }
@@ -125,8 +130,8 @@ PAGE_CSS = """
             rgba(255,255,255,0.02) 0%,
             rgba(255,255,255,0) 100%);
     border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 16px;
-    padding: 1.35rem 1.4rem 1.2rem;
+    border-radius: 14px;
+    padding: 0.95rem 1.1rem 0.85rem;
     height: 100%;
     position: relative;
     overflow: hidden;
@@ -139,7 +144,7 @@ PAGE_CSS = """
 .stat-card::after {
     content: "";
     position: absolute;
-    left: 1.4rem; right: 1.4rem; bottom: 0;
+    left: 1.1rem; right: 1.1rem; bottom: 0;
     height: 1px;
     background: linear-gradient(90deg,
         transparent 0%,
@@ -149,16 +154,16 @@ PAGE_CSS = """
 }
 .stat-label {
     font-family: 'Outfit', sans-serif;
-    font-size: 0.68rem;
+    font-size: 0.64rem;
     text-transform: uppercase;
     letter-spacing: 0.14em;
     color: #64748B;
     font-weight: 600;
-    margin-bottom: 0.55rem;
+    margin-bottom: 0.35rem;
 }
 .stat-value {
     font-family: 'Outfit', sans-serif;
-    font-size: 2.6rem;
+    font-size: 2.05rem;
     font-weight: 700;
     letter-spacing: -0.04em;
     color: #F1F5F9;
@@ -168,22 +173,22 @@ PAGE_CSS = """
 .stat-value.accent { color: #F97316; }
 .stat-sub {
     font-family: 'Outfit', sans-serif;
-    font-size: 0.78rem;
+    font-size: 0.72rem;
     color: #64748B;
-    margin-top: 0.35rem;
+    margin-top: 0.25rem;
     font-weight: 400;
 }
-.wl-split { display: flex; align-items: baseline; gap: 0.35rem; }
-.wl-wins   { color: #4ADE80; font-weight: 700; font-size: 2.6rem;
+.wl-split { display: flex; align-items: baseline; gap: 0.3rem; }
+.wl-wins   { color: #4ADE80; font-weight: 700; font-size: 2.05rem;
              font-variant-numeric: tabular-nums; letter-spacing: -0.04em; }
-.wl-slash  { color: #334155; font-weight: 500; font-size: 1.8rem; }
-.wl-losses { color: #F87171; font-weight: 700; font-size: 2.6rem;
+.wl-slash  { color: #334155; font-weight: 500; font-size: 1.45rem; }
+.wl-losses { color: #F87171; font-weight: 700; font-size: 2.05rem;
              font-variant-numeric: tabular-nums; letter-spacing: -0.04em; }
 .trend-up {
     color: #4ADE80;
-    font-size: 0.78rem;
+    font-size: 0.7rem;
     font-weight: 600;
-    margin-left: 0.4rem;
+    margin-left: 0.35rem;
 }
 
 /* Section heading */
@@ -191,7 +196,7 @@ PAGE_CSS = """
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    margin: 2.25rem 0 0.8rem;
+    margin: 1.2rem 0 0.55rem;
 }
 .section-title {
     font-family: 'Outfit', sans-serif;
@@ -211,16 +216,18 @@ PAGE_CSS = """
 /* Recent games row */
 .game-row {
     display: grid;
-    grid-template-columns: auto 1fr auto auto;
+    grid-template-columns: 1fr auto;
     align-items: center;
-    gap: 1rem;
-    padding: 0.9rem 1.1rem;
-    border-radius: 12px;
+    gap: 0.7rem;
+    padding: 0.6rem 0.85rem;
+    border-radius: 10px;
     border: 1px solid rgba(255,255,255,0.05);
     background: rgba(255,255,255,0.015);
     transition: border-color 0.15s ease, background 0.15s ease;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.35rem;
+    min-width: 0;
 }
+.game-row > div { min-width: 0; }
 .game-row:hover {
     border-color: rgba(249,115,22,0.18);
     background: rgba(249,115,22,0.03);
@@ -235,16 +242,22 @@ PAGE_CSS = """
 }
 .game-title {
     font-family: 'Outfit', sans-serif;
-    font-size: 0.98rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: #F1F5F9;
     letter-spacing: -0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .game-sub {
     font-family: 'Outfit', sans-serif;
-    font-size: 0.78rem;
+    font-size: 0.72rem;
     color: #64748B;
-    margin-top: 2px;
+    margin-top: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .game-date {
     font-family: 'Outfit', sans-serif;
@@ -367,30 +380,30 @@ username = player.get("Username", "")
 initials = (first_name[:1] + last_name[:1]).upper() if first_name else "M"
 
 # ---------------------------------------------------------------------------
-# Hero
-# ---------------------------------------------------------------------------
-st.markdown(
-    f"""
-    <div class="profile-hero">
-        <div class="avatar-ring"><div class="avatar-inner">{initials}</div></div>
-        <div class="profile-name">{first_name} {last_name}</div>
-        <div class="profile-location">{location} · @{username}</div>
-        <div class="rank-pill">
-            <span class="rank-dot"></span>
-            Rank #{rank}
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
-
-# ---------------------------------------------------------------------------
-# Stat cards
+# Hero + stat cards (side-by-side on desktop)
 # ---------------------------------------------------------------------------
 win_rate = (wins / games_played * 100) if games_played else 0
-stat_cols = st.columns(3, gap="medium")
+top_cols = st.columns([2.2, 1.4, 1.4, 1.4], gap="medium")
 
-with stat_cols[0]:
+with top_cols[0]:
+    st.markdown(
+        f"""
+        <div class="profile-hero">
+            <div class="avatar-ring"><div class="avatar-inner">{initials}</div></div>
+            <div class="hero-text">
+                <div class="profile-name">{first_name} {last_name}</div>
+                <div class="profile-location">{location} · @{username}</div>
+                <div class="rank-pill">
+                    <span class="rank-dot"></span>
+                    Rank #{rank}
+                </div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+with top_cols[1]:
     st.markdown(
         f"""
         <div class="stat-card">
@@ -402,7 +415,7 @@ with stat_cols[0]:
         unsafe_allow_html=True,
     )
 
-with stat_cols[1]:
+with top_cols[2]:
     st.markdown(
         f"""
         <div class="stat-card">
@@ -418,7 +431,7 @@ with stat_cols[1]:
         unsafe_allow_html=True,
     )
 
-with stat_cols[2]:
+with top_cols[3]:
     st.markdown(
         f"""
         <div class="stat-card">
@@ -437,140 +450,136 @@ with stat_cols[2]:
 # Skill Score chart
 # ---------------------------------------------------------------------------
 history = fetch_skill_history(player_id)
-
-st.markdown(
-    """
-    <div class="section-head">
-        <div class="section-title">Skill Score</div>
-        <div class="section-meta">Past games · chronological</div>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
-
-if history:
-    x_vals = list(range(1, len(history) + 1))
-    y_vals = [h["SkillScore"] for h in history]
-    dates = [
-        datetime.fromisoformat(h["GameDate"]).strftime("%b %d, %Y")
-        if h.get("GameDate")
-        else ""
-        for h in history
-    ]
-
-    fig = go.Figure()
-
-    # Gradient fill under line
-    fig.add_trace(
-        go.Scatter(
-            x=x_vals,
-            y=y_vals,
-            mode="lines",
-            line=dict(color="rgba(249,115,22,0.95)", width=2.5, shape="spline"),
-            fill="tozeroy",
-            fillcolor="rgba(249,115,22,0.12)",
-            hovertemplate=(
-                "<b>%{customdata}</b><br>Skill Score: <b>%{y:,}</b><extra></extra>"
-            ),
-            customdata=dates,
-            showlegend=False,
-        )
-    )
-
-    # Highlight last point
-    fig.add_trace(
-        go.Scatter(
-            x=[x_vals[-1]],
-            y=[y_vals[-1]],
-            mode="markers",
-            marker=dict(
-                size=12,
-                color="#F97316",
-                line=dict(color="#0C1222", width=3),
-            ),
-            hoverinfo="skip",
-            showlegend=False,
-        )
-    )
-
-    y_min = min(y_vals)
-    y_max = max(y_vals)
-    y_pad = max(40, (y_max - y_min) * 0.18)
-
-    fig.update_layout(
-        height=260,
-        margin=dict(l=0, r=0, t=10, b=10),
-        paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(family="Outfit, sans-serif", color="#94A3B8", size=12),
-        hoverlabel=dict(
-            bgcolor="#1E293B",
-            bordercolor="rgba(255,255,255,0.1)",
-            font=dict(family="Outfit, sans-serif", color="#F1F5F9", size=13),
-        ),
-        xaxis=dict(
-            showgrid=False,
-            zeroline=False,
-            showticklabels=False,
-            fixedrange=True,
-        ),
-        yaxis=dict(
-            showgrid=True,
-            gridcolor="rgba(255,255,255,0.04)",
-            gridwidth=1,
-            griddash="dot",
-            zeroline=False,
-            showticklabels=True,
-            tickfont=dict(color="#475569", size=10),
-            range=[max(0, y_min - y_pad), y_max + y_pad],
-            fixedrange=True,
-        ),
-    )
-
-    st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
-else:
-    st.caption("No games played yet — your skill trajectory will appear here.")
-
-# ---------------------------------------------------------------------------
-# Recent games
-# ---------------------------------------------------------------------------
 recent = fetch_recent_games(player_id, limit=8)
 
-st.markdown(
-    f"""
-    <div class="section-head">
-        <div class="section-title">Recent Games</div>
-        <div class="section-meta">Last {len(recent)}</div>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
+bottom_cols = st.columns([2, 1.2], gap="large")
 
-if not recent:
-    st.caption("No games on record yet. Check in at a court to get started.")
-else:
-    for idx, g in enumerate(recent, start=1):
-        result = (g.get("Result") or "").strip()
-        is_win = result.lower() == "win"
-        badge_class = "win" if is_win else "loss"
-        rel = relative_date(g.get("GameDate"))
-        court_name = g.get("CourtName", "Unknown Court")
-        game_type = g.get("GameType", "")
-        score = g.get("Score", "?")
+with bottom_cols[0]:
+    st.markdown(
+        """
+        <div class="section-head">
+            <div class="section-title">Skill Score</div>
+            <div class="section-meta">Past games · chronological</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
-        st.markdown(
-            f"""
-            <div class="game-row">
-                <div class="game-index">{idx:02d}</div>
-                <div>
-                    <div class="game-title">{court_name}</div>
-                    <div class="game-sub">{game_type} · {score} pts</div>
-                </div>
-                <div class="result-badge {badge_class}">
-                    {"Win" if is_win else "Loss"}
-                </div>
-                <div class="game-date">{rel}</div>
-            </div>
-            """,
-            unsafe_allow_html=True,
+    if history:
+        x_vals = list(range(1, len(history) + 1))
+        y_vals = [h["SkillScore"] for h in history]
+        dates = [
+            datetime.fromisoformat(h["GameDate"]).strftime("%b %d, %Y")
+            if h.get("GameDate")
+            else ""
+            for h in history
+        ]
+
+        fig = go.Figure()
+
+        fig.add_trace(
+            go.Scatter(
+                x=x_vals,
+                y=y_vals,
+                mode="lines",
+                line=dict(color="rgba(249,115,22,0.95)", width=2.5, shape="spline"),
+                fill="tozeroy",
+                fillcolor="rgba(249,115,22,0.12)",
+                hovertemplate=(
+                    "<b>%{customdata}</b><br>Skill Score: <b>%{y:,}</b><extra></extra>"
+                ),
+                customdata=dates,
+                showlegend=False,
+            )
         )
+
+        fig.add_trace(
+            go.Scatter(
+                x=[x_vals[-1]],
+                y=[y_vals[-1]],
+                mode="markers",
+                marker=dict(
+                    size=12,
+                    color="#F97316",
+                    line=dict(color="#0C1222", width=3),
+                ),
+                hoverinfo="skip",
+                showlegend=False,
+            )
+        )
+
+        y_min = min(y_vals)
+        y_max = max(y_vals)
+        y_pad = max(40, (y_max - y_min) * 0.18)
+
+        fig.update_layout(
+            height=320,
+            margin=dict(l=0, r=0, t=10, b=10),
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            font=dict(family="Outfit, sans-serif", color="#94A3B8", size=12),
+            hoverlabel=dict(
+                bgcolor="#1E293B",
+                bordercolor="rgba(255,255,255,0.1)",
+                font=dict(family="Outfit, sans-serif", color="#F1F5F9", size=13),
+            ),
+            xaxis=dict(
+                showgrid=False,
+                zeroline=False,
+                showticklabels=False,
+                fixedrange=True,
+            ),
+            yaxis=dict(
+                showgrid=True,
+                gridcolor="rgba(255,255,255,0.04)",
+                gridwidth=1,
+                griddash="dot",
+                zeroline=False,
+                showticklabels=True,
+                tickfont=dict(color="#475569", size=10),
+                range=[max(0, y_min - y_pad), y_max + y_pad],
+                fixedrange=True,
+            ),
+        )
+
+        st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+    else:
+        st.caption("No games played yet — your skill trajectory will appear here.")
+
+with bottom_cols[1]:
+    st.markdown(
+        f"""
+        <div class="section-head">
+            <div class="section-title">Recent Games</div>
+            <div class="section-meta">Last {len(recent)}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    if not recent:
+        st.caption("No games on record yet. Check in at a court to get started.")
+    else:
+        for g in recent:
+            result = (g.get("Result") or "").strip()
+            is_win = result.lower() == "win"
+            badge_class = "win" if is_win else "loss"
+            rel = relative_date(g.get("GameDate"))
+            court_name = g.get("CourtName", "Unknown Court")
+            game_type = g.get("GameType", "")
+            score = g.get("Score", "?")
+
+            st.markdown(
+                f"""
+                <div class="game-row">
+                    <div>
+                        <div class="game-title">{court_name}</div>
+                        <div class="game-sub">{game_type} · {score} pts · {rel}</div>
+                    </div>
+                    <div class="result-badge {badge_class}">
+                        {"Win" if is_win else "Loss"}
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
