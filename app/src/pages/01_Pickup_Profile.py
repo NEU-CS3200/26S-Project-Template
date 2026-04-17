@@ -1,5 +1,6 @@
 import logging
 from datetime import UTC, datetime
+from email.utils import parsedate_to_datetime
 
 import streamlit as st
 
@@ -26,38 +27,47 @@ SideBarLinks()
 PAGE_CSS = """
 .block-container { padding-top: 3.5rem !important; max-width: 1400px; }
 
-/* Profile hero — horizontal compact layout */
+/* Profile hero — matches stat-card treatment so the top row reads as one strip */
 .profile-hero {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 1.15rem;
-    padding: 0.6rem 0.25rem;
-    position: relative;
+    gap: 1rem;
+    padding: 0.95rem 1.1rem;
     height: 100%;
+    min-height: 118px;
+    box-sizing: border-box;
+    background:
+        linear-gradient(180deg,
+            rgba(249,115,22,0.04) 0%,
+            rgba(255,255,255,0) 100%);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px;
+    position: relative;
+    overflow: hidden;
 }
-.profile-hero::before {
+.profile-hero::after {
     content: "";
     position: absolute;
-    inset: -12px -28px;
-    background:
-        radial-gradient(380px 180px at 22% 50%,
-            rgba(249,115,22,0.09) 0%,
-            rgba(249,115,22,0.0) 65%);
-    pointer-events: none;
-    z-index: 0;
+    left: 1.1rem; right: 1.1rem; bottom: 0;
+    height: 1px;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(249,115,22,0.45) 50%,
+        transparent 100%);
+    opacity: 0.6;
 }
-.profile-hero > * { position: relative; z-index: 1; }
 .hero-text {
     display: flex;
     flex-direction: column;
-    gap: 0.28rem;
+    gap: 0.18rem;
     min-width: 0;
+    flex: 1;
 }
 
 .avatar-ring {
-    width: 88px;
-    height: 88px;
+    width: 72px;
+    height: 72px;
     flex-shrink: 0;
     border-radius: 50%;
     padding: 2.5px;
@@ -72,7 +82,7 @@ PAGE_CSS = """
     align-items: center;
     justify-content: center;
     font-family: 'Outfit', sans-serif;
-    font-size: 1.8rem;
+    font-size: 1.45rem;
     font-weight: 700;
     letter-spacing: -0.04em;
     color: #F1F5F9;
@@ -81,22 +91,25 @@ PAGE_CSS = """
 
 .profile-name {
     font-family: 'Outfit', sans-serif;
-    font-size: 1.65rem;
+    font-size: 1.2rem;
     font-weight: 700;
-    letter-spacing: -0.035em;
+    letter-spacing: -0.03em;
     color: #F1F5F9;
     margin: 0;
-    line-height: 1.05;
+    line-height: 1.1;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 .profile-location {
     font-family: 'Outfit', sans-serif;
-    font-size: 0.82rem;
+    font-size: 0.72rem;
     color: #64748B;
     font-weight: 400;
     letter-spacing: 0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .rank-pill {
     display: inline-flex;
@@ -125,6 +138,9 @@ PAGE_CSS = """
 
 /* Stat cards */
 .stat-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     background:
         linear-gradient(180deg,
             rgba(255,255,255,0.02) 0%,
@@ -133,6 +149,8 @@ PAGE_CSS = """
     border-radius: 14px;
     padding: 0.95rem 1.1rem 0.85rem;
     height: 100%;
+    min-height: 118px;
+    box-sizing: border-box;
     position: relative;
     overflow: hidden;
     transition: border-color 0.2s ease, transform 0.2s ease;
@@ -184,11 +202,17 @@ PAGE_CSS = """
 .wl-slash  { color: #334155; font-weight: 500; font-size: 1.45rem; }
 .wl-losses { color: #F87171; font-weight: 700; font-size: 2.05rem;
              font-variant-numeric: tabular-nums; letter-spacing: -0.04em; }
+.skill-value-row {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-wrap: nowrap;
+}
 .trend-up {
     color: #4ADE80;
-    font-size: 0.7rem;
-    font-weight: 600;
-    margin-left: 0.35rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1;
 }
 
 /* Section heading */
@@ -338,13 +362,19 @@ def fetch_skill_history(pid):
         return []
 
 
-def relative_date(iso_str):
-    if not iso_str:
+def relative_date(raw):
+    if not raw:
         return ""
+    dt = None
     try:
-        dt = datetime.fromisoformat(iso_str.replace("Z", "+00:00"))
+        dt = datetime.fromisoformat(raw.replace("Z", "+00:00"))
     except ValueError:
-        return iso_str
+        try:
+            dt = parsedate_to_datetime(raw)
+        except (TypeError, ValueError):
+            return raw
+    if dt is None:
+        return raw
     now = datetime.now(dt.tzinfo or UTC)
     delta = now - dt
     days = delta.days
@@ -436,9 +466,9 @@ with top_cols[3]:
         f"""
         <div class="stat-card">
             <div class="stat-label">Skill Score</div>
-            <div>
+            <div class="skill-value-row">
                 <span class="stat-value accent">{skill_display:,}</span>
-                <span class="trend-up">▲ trending</span>
+                <span class="trend-up">▲</span>
             </div>
             <div class="stat-sub">Rating {skill_rating:.1f} / 5.0</div>
         </div>
@@ -450,9 +480,9 @@ with top_cols[3]:
 # Skill Score chart
 # ---------------------------------------------------------------------------
 history = fetch_skill_history(player_id)
-recent = fetch_recent_games(player_id, limit=8)
+recent = fetch_recent_games(player_id, limit=6)
 
-bottom_cols = st.columns([2, 1.2], gap="large")
+bottom_cols = st.columns([2.6, 1], gap="large")
 
 with bottom_cols[0]:
     st.markdown(
