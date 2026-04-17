@@ -225,6 +225,116 @@ def update_court(court_id):
         cursor.close()
 
 
+# Get all active check-ins at a specific court (live player count)
+# Example: /court/courts/1/checkins
+@courts.route("/courts/<int:court_id>/checkins", methods=["GET"])
+def get_court_checkins(court_id):
+    cursor = get_db().cursor(dictionary=True)
+    try:
+        current_app.logger.info(f"GET /court/courts/{court_id}/checkins")
+
+        cursor.execute(
+            """
+            SELECT ci.CheckInId, ci.CheckInTime, p.PlayerId, p.Username, p.SkillRating
+            FROM CheckIn ci
+                JOIN Player p ON p.PlayerId = ci.PlayerId
+            WHERE ci.CourtId = %s AND ci.CheckOutTime IS NULL
+            ORDER BY ci.CheckInTime DESC
+            """,
+            (court_id,),
+        )
+        return jsonify(cursor.fetchall()), 200
+    except Error as e:
+        current_app.logger.error(f"Database error in get_court_checkins: {e}")
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+
+
+# Check in a player at a court (Pickup Player User Story 2)
+# Required fields: PlayerId
+# Example: POST /court/courts/1/checkins
+@courts.route("/courts/<int:court_id>/checkins", methods=["POST"])
+def checkin_at_court(court_id):
+    cursor = get_db().cursor(dictionary=True)
+    try:
+        current_app.logger.info(f"POST /court/courts/{court_id}/checkins")
+        data = request.get_json()
+
+        if "PlayerId" not in data:
+            return jsonify({"error": "Missing required field: PlayerId"}), 400
+
+        cursor.execute(
+            """
+            INSERT INTO CheckIn (CheckInTime, CheckOutTime, PlayerId, CourtId)
+            VALUES (NOW(), NULL, %s, %s)
+            """,
+            (data["PlayerId"], court_id),
+        )
+        get_db().commit()
+
+        return jsonify(
+            {"message": "Checked in successfully", "CheckInId": cursor.lastrowid}
+        ), 201
+    except Error as e:
+        current_app.logger.error(f"Database error in checkin_at_court: {e}")
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+
+
+# Check out of a court (Pickup Player User Story 6)
+# Example: PUT /court/checkins/6
+@courts.route("/checkins/<int:checkin_id>", methods=["PUT"])
+def checkout_at_court(checkin_id):
+    cursor = get_db().cursor(dictionary=True)
+    try:
+        current_app.logger.info(f"PUT /court/checkins/{checkin_id}")
+
+        cursor.execute(
+            "UPDATE CheckIn SET CheckOutTime = NOW() WHERE CheckInId = %s",
+            (checkin_id,),
+        )
+        get_db().commit()
+
+        if cursor.rowcount == 0:
+            return jsonify({"error": "Check-in record not found"}), 404
+
+        return jsonify({"message": "Checked out successfully"}), 200
+    except Error as e:
+        current_app.logger.error(f"Database error in checkout_at_court: {e}")
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+
+
+# Add an amenity to an existing court (Admin User Story 1)
+# Required fields: AmenityId
+# Example: POST /court/courts/1/amenities
+@courts.route("/courts/<int:court_id>/amenities", methods=["POST"])
+def add_court_amenity(court_id):
+    cursor = get_db().cursor(dictionary=True)
+    try:
+        current_app.logger.info(f"POST /court/courts/{court_id}/amenities")
+        data = request.get_json()
+
+        if "AmenityId" not in data:
+            return jsonify({"error": "Missing required field: AmenityId"}), 400
+
+        cursor.execute(
+            "INSERT INTO CourtAmenity (CourtId, AmenityId) VALUES (%s, %s)",
+            (court_id, data["AmenityId"]),
+        )
+        get_db().commit()
+
+        return jsonify({"message": "Amenity added to court successfully"}), 201
+    except Error as e:
+        current_app.logger.error(f"Database error in add_court_amenity: {e}")
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+
+
 # Get all reviews for a specific court with the reviewer's username
 # Optional: ?flagged_only=true to show only flagged reviews
 # Example: /court/courts/1/reviews

@@ -23,7 +23,6 @@ def get_all_tournaments():
                    t.StartDate,
                    t.EndDate,
                    t.Status,
-                   t.MaxPlayers,
                    c.CourtName,
                    COUNT(tr.PlayerId) AS RegisteredPlayers
             FROM Tournament t
@@ -40,7 +39,7 @@ def get_all_tournaments():
 
         query += """
             GROUP BY t.TournamentId, t.TournamentName, t.StartDate, t.EndDate,
-                     t.Status, t.MaxPlayers, c.CourtName
+                     t.Status, c.CourtName
             ORDER BY t.StartDate
         """
 
@@ -68,7 +67,7 @@ def get_tournament(tournament_id):
         cursor.execute(
             """
             SELECT t.TournamentId, t.TournamentName, t.StartDate, t.EndDate,
-                   t.Status, t.MaxPlayers, c.CourtName
+                   t.Status, t.Winner, c.CourtName
             FROM Tournament t
                 LEFT JOIN Court c ON c.CourtId = t.CourtId
             WHERE t.TournamentId = %s
@@ -160,6 +159,46 @@ def register_player(tournament_id):
         return jsonify({"message": "Registered for tournament successfully"}), 201
     except Error as e:
         current_app.logger.error(f"Database error in register_player: {e}")
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+
+
+# Get live bracket standings for a tournament (Competitive Player User Story 6)
+# Example: /tournament/tournaments/2/brackets
+@tournaments_bp.route("/tournaments/<int:tournament_id>/brackets", methods=["GET"])
+def get_tournament_brackets(tournament_id):
+    cursor = get_db().cursor(dictionary=True)
+    try:
+        current_app.logger.info(
+            f"GET /tournament/tournaments/{tournament_id}/brackets"
+        )
+
+        cursor.execute(
+            """
+            SELECT tm.MatchId,
+                   tm.RoundNumber,
+                   tm.MatchOrder,
+                   tm.MatchStatus,
+                   p1.PlayerId    AS PlayerId,
+                   p1.Username    AS PlayerName,
+                   p2.PlayerId    AS OpponentId,
+                   p2.Username    AS OpponentName,
+                   mp1.IsWinner
+            FROM TournamentMatch tm
+                JOIN MatchParticipation mp1 ON mp1.MatchId = tm.MatchId
+                JOIN Player p1 ON p1.PlayerId = mp1.PlayerId
+                LEFT JOIN MatchParticipation mp2
+                    ON mp2.MatchId = tm.MatchId AND mp2.PlayerId <> mp1.PlayerId
+                LEFT JOIN Player p2 ON p2.PlayerId = mp2.PlayerId
+            WHERE tm.TournamentId = %s
+            ORDER BY tm.RoundNumber, tm.MatchOrder
+            """,
+            (tournament_id,),
+        )
+        return jsonify(cursor.fetchall()), 200
+    except Error as e:
+        current_app.logger.error(f"Database error in get_tournament_brackets: {e}")
         return jsonify({"error": str(e)}), 500
     finally:
         cursor.close()
@@ -291,6 +330,38 @@ def get_games():
         return jsonify(cursor.fetchall()), 200
     except Error as e:
         current_app.logger.error(f"Database error in get_games: {e}")
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+
+
+# Log a game result for a player in an existing game (Competitive Player User Story 2)
+# Required fields: PlayerId, Result, Score
+# Example: POST /tournament/games/1/participants
+@tournaments_bp.route("/games/<int:game_id>/participants", methods=["POST"])
+def add_game_participant(game_id):
+    cursor = get_db().cursor(dictionary=True)
+    try:
+        current_app.logger.info(f"POST /tournament/games/{game_id}/participants")
+        data = request.get_json()
+
+        required_fields = ["PlayerId", "Result", "Score"]
+        for field in required_fields:
+            if field not in data:
+                return jsonify({"error": f"Missing required field: {field}"}), 400
+
+        cursor.execute(
+            """
+            INSERT INTO GameParticipation (GameId, PlayerId, Result, Score)
+            VALUES (%s, %s, %s, %s)
+            """,
+            (game_id, data["PlayerId"], data["Result"], data["Score"]),
+        )
+        get_db().commit()
+
+        return jsonify({"message": "Game result logged successfully"}), 201
+    except Error as e:
+        current_app.logger.error(f"Database error in add_game_participant: {e}")
         return jsonify({"error": str(e)}), 500
     finally:
         cursor.close()
