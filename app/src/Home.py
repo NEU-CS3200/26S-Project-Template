@@ -151,3 +151,24 @@ if st.button("Enter as Marcus", type="primary", use_container_width=True):
     st.session_state["player_id"] = 1
     logger.info("Logging in as Pickup Player Persona")
     st.switch_page("pages/00_Pickup_Home.py")
+
+st.markdown(
+    """
+    <div class="persona-card">
+        <div class="persona-avatar">A</div>
+        <div class="persona-info">
+            <p class="persona-name">Aaliyah</p>
+            <p class="persona-role">Competitive Player</p>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+if st.button("Enter as Aaliyah", type="primary", use_container_width=True):
+    st.session_state["authenticated"] = True
+    st.session_state["role"] = "competitive_player"
+    st.session_state["first_name"] = "Aaliyah"
+    st.session_state["player_id"] = 3
+    logger.info("Logging in as Competitive Player Persona")
+    st.switch_page("pages/11_Leaderboard.py")
