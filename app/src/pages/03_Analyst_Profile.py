@@ -5,7 +5,6 @@ st.set_page_config(layout="wide", page_title="HoopSpot - Analytics")
 from modules.nav import SideBarLinks
 from modules.styles import inject_css
 
-st.write(f"DEBUG on page: auth={st.session_state.get('authenticated')}, role={st.session_state.get('role')}")
 SideBarLinks()
 
 import logging

@@ -107,13 +107,9 @@ def SideBarLinks(show_home=False):
     if show_home:
         home_nav()
 
-    st.sidebar.button("TEST BUTTON")  # ← totally outside any if block
-    st.sidebar.write(f"DEBUG role: {st.session_state.get('role', 'MISSING')}")
-    st.sidebar.write(f"DEBUG auth: {st.session_state.get('authenticated', 'MISSING')}")
 
     if st.session_state["authenticated"]:
         if st.session_state["role"] == "pickup_player":
-            st.sidebar.write("DEBUG: role is data_analyst")
             pickup_home_nav()
             pickup_profile_nav()
 
@@ -131,7 +127,6 @@ def SideBarLinks(show_home=False):
 
         
         if st.session_state["role"] == "data_analyst":
-            st.sidebar.write("DEBUG: role is data_analyst")
             analyst_overview_nav()
             analyst_dashboard_nav()
             analyst_heatmap_nav()
