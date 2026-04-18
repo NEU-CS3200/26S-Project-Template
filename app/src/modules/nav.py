@@ -4,8 +4,8 @@
 
 import streamlit as st
 
-
 # ---- General ----------------------------------------------------------------
+
 
 def home_nav():
     st.sidebar.page_link("Home.py", label="Home", icon="🏠")
@@ -16,6 +16,7 @@ def about_page_nav():
 
 
 # ---- Role: pol_strat_advisor ------------------------------------------------
+
 
 def pol_strat_home_nav():
     st.sidebar.page_link(
@@ -34,6 +35,7 @@ def map_demo_nav():
 
 
 # ---- Role: usaid_worker -----------------------------------------------------
+
 
 def usaid_worker_home_nav():
     st.sidebar.page_link(
@@ -67,6 +69,7 @@ def classification_nav():
 
 # ---- Role: administrator ----------------------------------------------------
 
+
 def admin_home_nav():
     st.sidebar.page_link("pages/20_Admin_Home.py", label="System Admin", icon="🖥️")
 
@@ -78,6 +81,7 @@ def ml_model_mgmt_nav():
 
 
 # ---- Sidebar assembly -------------------------------------------------------
+
 
 def SideBarLinks(show_home=False):
     """
@@ -97,7 +101,6 @@ def SideBarLinks(show_home=False):
         home_nav()
 
     if st.session_state["authenticated"]:
-
         if st.session_state["role"] == "pol_strat_advisor":
             pol_strat_home_nav()
             world_bank_viz_nav()
