@@ -34,77 +34,138 @@ flagged_users   = len(user_flags) if isinstance(user_flags, list) else 0
  
 now = datetime.now().strftime("%B %d, %Y at %I:%M %p")
  
-# ── Avatar + greeting ────────────────────────────────────────────────────────
-st.markdown(
-    f"""
-    <div style="display:flex; align-items:center; gap:1.25rem; margin-bottom:0.5rem;">
-        <div style="
-            width:60px; height:60px; border-radius:14px;
-            background: linear-gradient(135deg, #F97316, #EA580C);
-            display:flex; align-items:center; justify-content:center;
-            font-family:'Outfit',sans-serif; font-size:1.4rem;
-            font-weight:700; color:white; flex-shrink:0;
-        ">DW</div>
-        <div>
-            <div style="font-family:'Outfit',sans-serif; font-size:1.9rem;
-                font-weight:800; color:#F1F5F9; line-height:1.1;">
-                Welcome, Devon 👋
-            </div>
-            <div style="font-family:'Outfit',sans-serif; font-size:0.85rem;
-                color:#64748B;">
-                System Administrator · HoopSpot Platform
-            </div>
-        </div>
-    </div>
-    <div style="font-family:'Outfit',sans-serif; font-size:0.75rem;
-        color:#475569; margin-bottom:1.5rem;">
-        Last synced: {now}
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
+# ── Page CSS ─────────────────────────────────────────────────────────────────
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
  
-st.markdown("---")
+.admin-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 2rem 0 1rem 0;
+}
+.admin-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #F97316, #EA580C);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: white;
+    flex-shrink: 0;
+    box-shadow: 0 8px 32px rgba(249, 115, 22, 0.35);
+}
+.admin-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 3.2rem;
+    font-weight: 900;
+    color: #FFFFFF;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin: 0;
+}
+.admin-subtitle {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.9rem;
+    color: #64748B;
+    margin: 4px 0 0 0;
+    font-weight: 400;
+}
+.admin-sync {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.72rem;
+    color: #334155;
+    margin-top: 2rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+.section-label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #94A3B8;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 2rem 0 1rem 0;
+}
+.stat-card {
+    background: linear-gradient(135deg, rgba(249,115,22,0.05) 0%, rgba(15,23,42,0.6) 100%);
+    border: 1px solid rgba(249,115,22,0.1);
+    border-radius: 18px;
+    padding: 1.75rem 1.5rem;
+    text-align: center;
+    height: 100%;
+}
+.stat-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+.stat-value {
+    font-family: 'Outfit', sans-serif;
+    font-size: 2.8rem;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.4rem;
+}
+.stat-label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+.divider {
+    border: none;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    margin: 1.5rem 0;
+}
+</style>
+""", unsafe_allow_html=True)
  
-# ── Stats cards ───────────────────────────────────────────────────────────────
-st.markdown("##### Platform Overview")
+# ── Header ───────────────────────────────────────────────────────────────────
+st.markdown(f"""
+<div class="admin-header">
+    <div class="admin-avatar">DW</div>
+    <div>
+        <div class="admin-title">Welcome, Devon 👋</div>
+        <div class="admin-subtitle">System Administrator · HoopSpot Platform</div>
+    </div>
+</div>
+<div class="admin-sync">⏱ Last synced: {now}</div>
+<hr class="divider">
+""", unsafe_allow_html=True)
+ 
+# ── Stats ─────────────────────────────────────────────────────────────────────
+st.markdown('<div class="section-label">Platform Overview</div>', unsafe_allow_html=True)
+ 
 c1, c2, c3, c4 = st.columns(4)
  
-def stat_card(col, label, value, icon, color="#F97316"):
-    col.markdown(
-        f"""
-        <div style="
-            background: linear-gradient(135deg, rgba(249,115,22,0.06), rgba(22,32,50,0.6));
-            border: 1px solid rgba(249,115,22,0.12);
-            border-radius: 14px;
-            padding: 1.25rem;
-            text-align: center;
-        ">
-            <div style="font-size:1.75rem;">{icon}</div>
-            <div style="font-family:'Outfit',sans-serif; font-size:2rem;
-                font-weight:800; color:{color}; line-height:1.1;">
-                {value}
-            </div>
-            <div style="font-family:'Outfit',sans-serif; font-size:0.75rem;
-                color:#64748B; text-transform:uppercase; letter-spacing:0.06em;">
-                {label}
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+def stat_card(col, icon, value, label, color):
+    col.markdown(f"""
+    <div class="stat-card">
+        <div class="stat-icon">{icon}</div>
+        <div class="stat-value" style="color:{color};">{value}</div>
+        <div class="stat-label">{label}</div>
+    </div>
+    """, unsafe_allow_html=True)
  
-stat_card(c1, "Total Courts",     total_courts,    "🏀")
-stat_card(c2, "Active Courts",    active_courts,   "🟢", "#4ADE80")
-stat_card(c3, "Pending Reviews",  pending_reviews, "⭐", "#FACC15" if pending_reviews == 0 else "#F87171")
-stat_card(c4, "Flagged Users",    flagged_users,   "👥", "#FACC15" if flagged_users == 0 else "#F87171")
+stat_card(c1, "🏀", total_courts,    "Total Courts",    "#F97316")
+stat_card(c2, "🟢", active_courts,   "Active Courts",   "#4ADE80")
+stat_card(c3, "⭐", pending_reviews, "Pending Reviews", "#FACC15" if pending_reviews == 0 else "#F87171")
+stat_card(c4, "👥", flagged_users,   "Flagged Users",   "#FACC15" if flagged_users == 0 else "#F87171")
  
-st.markdown("---")
+# ── Quick Actions ─────────────────────────────────────────────────────────────
+st.markdown('<hr class="divider">', unsafe_allow_html=True)
+st.markdown('<div class="section-label">Quick Actions</div>', unsafe_allow_html=True)
  
-# ── Navigation buttons ────────────────────────────────────────────────────────
-st.markdown("##### Quick Actions")
- 
-_, col1, col2, _ = st.columns([1, 2, 2, 1])
+col1, col2 = st.columns(2)
  
 with col1:
     if st.button("🏀  Manage Courts", type="primary", use_container_width=True):
