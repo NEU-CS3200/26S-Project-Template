@@ -72,6 +72,23 @@ def ml_model_mgmt_nav():
     )
 
 
+# ---- Role: data_analyst -----------------------------------------------------
+
+def analyst_overview_nav():
+    st.sidebar.page_link("pages/03_Analyst_Profile.py", label="Overview", icon="📊")
+
+def analyst_dashboard_nav():
+    st.sidebar.page_link("pages/04_Analyst_Dashboard.py", label="Dashboards", icon="📈")
+
+def analyst_heatmap_nav():
+    st.sidebar.page_link("pages/05_Analyst_Heatmap.py", label="Heatmap", icon="🗺️")
+
+def analyst_courts_nav():
+    st.sidebar.page_link("pages/06_Analyst_Courts.py", label="Court Details", icon="🏀")
+
+def analyst_csv_nav():
+    st.sidebar.page_link("pages/07_Analyst_CSV.py", label="CSV Export", icon="📥")
+
 # ---- Sidebar assembly -------------------------------------------------------
 
 
@@ -85,12 +102,18 @@ def SideBarLinks(show_home=False):
     if "authenticated" not in st.session_state:
         st.session_state.authenticated = False
         st.switch_page("Home.py")
+        st.stop
 
     if show_home:
         home_nav()
 
+    st.sidebar.button("TEST BUTTON")  # ← totally outside any if block
+    st.sidebar.write(f"DEBUG role: {st.session_state.get('role', 'MISSING')}")
+    st.sidebar.write(f"DEBUG auth: {st.session_state.get('authenticated', 'MISSING')}")
+
     if st.session_state["authenticated"]:
         if st.session_state["role"] == "pickup_player":
+            st.sidebar.write("DEBUG: role is data_analyst")
             pickup_home_nav()
             pickup_profile_nav()
 
@@ -105,6 +128,15 @@ def SideBarLinks(show_home=False):
         if st.session_state["role"] == "administrator":
             admin_home_nav()
             ml_model_mgmt_nav()
+
+        
+        if st.session_state["role"] == "data_analyst":
+            st.sidebar.write("DEBUG: role is data_analyst")
+            analyst_overview_nav()
+            analyst_dashboard_nav()
+            analyst_heatmap_nav()
+            analyst_courts_nav()
+            analyst_csv_nav()
 
     if st.session_state["authenticated"]:
         if st.sidebar.button("Logout"):

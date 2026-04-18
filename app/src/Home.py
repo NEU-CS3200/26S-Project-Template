@@ -1,3 +1,7 @@
+
+import streamlit as st
+st.set_page_config(layout="wide", page_title="HoopSpot")
+
 import logging
 
 logging.basicConfig(
@@ -5,14 +9,14 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-import streamlit as st
 
 from modules.nav import SideBarLinks
 from modules.styles import inject_css
 
-st.set_page_config(layout="wide", page_title="HoopSpot")
 
-st.session_state["authenticated"] = False
+
+if "authenticated" not in st.session_state:
+    st.session_state["authenticated"] = False
 
 SideBarLinks(show_home=True)
 
@@ -151,3 +155,26 @@ if st.button("Enter as Marcus", type="primary", use_container_width=True):
     st.session_state["player_id"] = 1
     logger.info("Logging in as Pickup Player Persona")
     st.switch_page("pages/00_Pickup_Home.py")
+
+
+st.markdown(
+    """
+    <div class="persona-card">
+        <div class="persona-avatar">PN</div>
+        <div class="persona-info">
+            <p class="persona-name">Priya Nair</p>
+            <p class="persona-role">Courts Data Analyst</p>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+if st.button("Enter as Priya", type="primary", use_container_width=True):
+    st.session_state["authenticated"] = True
+    st.session_state["role"] = "data_analyst"
+    st.session_state["first_name"] = "Priya"
+    st.session_state["player_id"] = 4
+    logger.info("Logging in as Data Analyst Persona")
+    st.switch_page("pages/03_Analyst_Profile.py")
+
