@@ -151,3 +151,23 @@ if st.button("Enter as Marcus", type="primary", use_container_width=True):
     st.session_state["player_id"] = 1
     logger.info("Logging in as Pickup Player Persona")
     st.switch_page("pages/00_Pickup_Home.py")
+
+st.markdown(
+    """
+    <div class="persona-card">
+        <div class="persona-avatar">DW</div>
+        <div class="persona-info">
+            <p class="persona-name">Devon Williams</p>
+            <p class="persona-role">System Administrator</p>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+if st.button("Enter as Devon", type="primary", use_container_width=True):
+    st.session_state["authenticated"] = True
+    st.session_state["role"] = "administrator"
+    st.session_state["first_name"] = "Devon"
+    logger.info("Logging in as System Administrator Persona")
+    st.switch_page("pages/20_Admin_Home.py")
