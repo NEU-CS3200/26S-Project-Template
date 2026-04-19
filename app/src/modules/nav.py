@@ -1,21 +1,17 @@
-# Idea borrowed from https://github.com/fsmosca/sample-streamlit-authenticator
-
-# This file has functions to add links to the left sidebar based on the user's role.
-
 import streamlit as st
 
+# ---- General ------------------------------------------------------------
 
 # ---- General ----------------------------------------------------------------
 
 def home_nav():
     st.sidebar.page_link("Home.py", label="Home", icon="🏠")
 
-
 def about_page_nav():
-    st.sidebar.page_link("pages/30_About.py", label="About", icon="🧠")
+    st.sidebar.page_link("pages/99_About.py", label="About", icon="🧠")
 
 
-# ---- Role: pol_strat_advisor ------------------------------------------------
+# ---- Role: Student ------------------------------------------------------
 
 def pol_strat_home_nav():
     st.sidebar.page_link(
@@ -65,33 +61,84 @@ def classification_nav():
     )
 
 
-# ---- Role: administrator ----------------------------------------------------
+# ---- Role: recruiter --------------------------------------------------------
 
-def admin_home_nav():
-    st.sidebar.page_link("pages/20_Admin_Home.py", label="System Admin", icon="🖥️")
+def recruiter_home_nav():
+    st.sidebar.page_link("pages/90_Recruiter_Home.py", label="Recruiter Home", icon="👔")
 
 
-def ml_model_mgmt_nav():
+def candidate_pipeline_nav():
+    st.sidebar.page_link("pages/91_Candidate_Pipeline.py", label="Candidate Pipeline", icon="📋")
+
+
+def candidate_profile_nav():
+    st.sidebar.page_link("pages/92_Candidate_Profile.py", label="Candidate Profile", icon="👤")
+
+
+def pipeline_stats_nav():
+    st.sidebar.page_link("pages/93_Pipeline_Stats.py", label="Pipeline Stats", icon="📊")
+
+
+# ---- Role: Administrator -----------------------------------------------
+
+# def admin_home_nav():
+#     st.sidebar.page_link("pages/30_Admin_Home.py", label="Admin Home", icon="🖥️")
+
+# def ml_model_mgmt_nav():
+#     st.sidebar.page_link(
+#         "pages/21_ML_Model_Mgmt.py", label="ML Model Management", icon="🏢"
+#     )
+
+def admin_dashboard_nav():
+    st.sidebar.page_link("pages/30_Admin_Dashboard.py", label="Dashboard", icon="🖥️")
+
+def admin_users_nav():
+    st.sidebar.page_link("pages/31_User_Management_.py", label="User Management", icon="🖥️")
+
+def admin_errors_nav():
+    st.sidebar.page_link("pages/32_Error_Logs.py", label="Error Logs", icon="🖥️")
+
+def admin_cleanup_nav():
+    st.sidebar.page_link("pages/33_Data_Cleanup.py", label="Data Cleanup", icon="🖥️")
+
+
+# ---- Role: job_seeker -------------------------------------------------------
+
+def job_seeker_home_nav():
     st.sidebar.page_link(
-        "pages/21_ML_Model_Mgmt.py", label="ML Model Management", icon="🏢"
+        "pages/40_Job_Seeker_Home.py", label="Job Seeker Home", icon="🏠"
     )
 
 
-# ---- Sidebar assembly -------------------------------------------------------
+def my_applications_nav():
+    st.sidebar.page_link(
+        "pages/41_My_Applications.py", label="My Applications", icon="📋"
+    )
+
+
+def reminders_nav():
+    st.sidebar.page_link(
+        "pages/42_Reminders.py", label="Reminders", icon="⏰"
+    )
+
+
+def offers_nav():
+    st.sidebar.page_link(
+        "pages/43_Offers.py", label="Compare Offers", icon="💼"
+    )
+
+
+# ---- Sidebar Builder ----------------------------------------------------
 
 def SideBarLinks(show_home=False):
-    """
-    Renders sidebar navigation links based on the logged-in user's role.
-    The role is stored in st.session_state when the user logs in on Home.py.
-    """
+    # st.sidebar.image("assets/logo.png", width=150)
+    if "authenticated" in st.session_state and st.session_state.get("role") == "administrator":
+        st.sidebar.image("assets/OfferWatchAdminLogo.png", width=150)
+    else:
+        st.sidebar.image("assets/logo.png", width=150)
 
-    # Logo appears at the top of the sidebar on every page
-    st.sidebar.image("assets/logo.png", width=150)
-
-    # If no one is logged in, send them to the Home (login) page
     if "authenticated" not in st.session_state:
-        st.session_state.authenticated = False
-        st.switch_page("Home.py")
+        st.session_state["authenticated"] = False
 
     if show_home:
         home_nav()
@@ -112,14 +159,24 @@ def SideBarLinks(show_home=False):
             classification_nav()
 
         if st.session_state["role"] == "administrator":
-            admin_home_nav()
-            ml_model_mgmt_nav()
+            admin_dashboard_nav()
+            admin_users_nav()
+            admin_errors_nav()
+            admin_cleanup_nav()
 
-    # About link appears at the bottom for all roles
+        if st.session_state["role"] == "job_seeker":
+            job_seeker_home_nav()
+            my_applications_nav()
+            reminders_nav()
+            offers_nav()
+
+        if st.session_state["role"] == "recruiter":
+            recruiter_home_nav()
+            candidate_pipeline_nav()
+            pipeline_stats_nav()
+
     about_page_nav()
 
-    if st.session_state["authenticated"]:
-        if st.sidebar.button("Logout"):
-            del st.session_state["role"]
-            del st.session_state["authenticated"]
-            st.switch_page("Home.py")
+    if st.sidebar.button("Logout", key=f"logout_{role or 'guest'}"):
+        st.session_state.clear()
+        st.switch_page("Home.py")
