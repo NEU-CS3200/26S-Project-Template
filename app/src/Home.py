@@ -1,72 +1,64 @@
 ##################################################
-# This is the main/entry-point file for the
-# sample application for your project
+# Main / entry-point file for OfferWatch
 ##################################################
 
-# Set up basic logging infrastructure
 import logging
-logging.basicConfig(format='%(filename)s:%(lineno)s:%(levelname)s -- %(message)s', level=logging.INFO)
+logging.basicConfig(
+    format='%(filename)s:%(lineno)s:%(levelname)s -- %(message)s',
+    level=logging.INFO
+)
 logger = logging.getLogger(__name__)
 
-# import the main streamlit library as well
-# as SideBarLinks function from src/modules folder
 import streamlit as st
+import requests
 from modules.nav import SideBarLinks
 
-# streamlit supports regular and wide layout (how the controls
-# are organized/displayed on the screen).
 st.set_page_config(layout='wide')
 
-# If a user is at this page, we assume they are not
-# authenticated.  So we change the 'authenticated' value
-# in the streamlit session_state to false.
+# User is not authenticated on the home screen
 st.session_state['authenticated'] = False
 
-# Use the SideBarLinks function from src/modules/nav.py to control
-# the links displayed on the left-side panel.
-# IMPORTANT: ensure src/.streamlit/config.toml sets
-# showSidebarNavigation = false in the [client] section
+# Show home link in sidebar
 SideBarLinks(show_home=True)
 
-# ***************************************************
-#    The major content of this page
-# ***************************************************
-
 logger.info("Loading the Home page of the app")
-st.title('CS 3200 Project Template')
-st.write('#### Hi! As which user would you like to log in?')
 
-# For each of the user personas for which we are implementing
-# functionality, we put a button on the screen that the user
-# can click to MIMIC logging in as that mock user.
+st.title("OfferWatch")
+st.write("#### Choose a persona to log in as")
 
-if st.button("Act as John, a Political Strategy Advisor",
-             type='primary',
-             use_container_width=True):
-    # when user clicks the button, they are now considered authenticated
-    st.session_state['authenticated'] = True
-    # we set the role of the current user
-    st.session_state['role'] = 'pol_strat_advisor'
-    # we add the first name of the user (so it can be displayed on
-    # subsequent pages).
-    st.session_state['first_name'] = 'John'
-    # finally, we ask streamlit to switch to another page, in this case, the
-    # landing page for this particular user type
-    logger.info("Logging in as Political Strategy Advisor Persona")
-    st.switch_page('pages/00_Pol_Strat_Home.py')
+col1, col2 = st.columns(2)
 
-if st.button('Act as Mohammad, a USAID Worker',
-             type='primary',
-             use_container_width=True):
-    st.session_state['authenticated'] = True
-    st.session_state['role'] = 'usaid_worker'
-    st.session_state['first_name'] = 'Mohammad'
-    st.switch_page('pages/10_USAID_Worker_Home.py')
+with col1:
+    if st.button('Act as Alex, a Job Seeker',
+                type='primary',
+                use_container_width=True):
+        st.session_state['authenticated'] = True
+        st.session_state['role'] = 'job_seeker'
+        st.session_state['first_name'] = 'Alex'
+        st.session_state['student_id'] = 1
+        logger.info("Logging in as Job Seeker Persona")
+        st.switch_page('pages/40_Job_Seeker_Home.py')
 
-if st.button('Act as System Administrator',
-             type='primary',
-             use_container_width=True):
-    st.session_state['authenticated'] = True
-    st.session_state['role'] = 'administrator'
-    st.session_state['first_name'] = 'SysAdmin'
-    st.switch_page('pages/20_Admin_Home.py')
+    if st.button("Act as Lisa Rodriguez, Career Services Analyst", type="primary", use_container_width=True):
+        st.session_state['authenticated'] = True
+        st.session_state['role'] = 'analyst'
+        st.session_state['first_name'] = 'Lisa'
+        logger.info("Logging in as Analyst persona")
+        st.switch_page('pages/10_Analyst_Home.py')
+
+with col2:
+    if st.button("Act as Reece James, Recruiter", type="primary", use_container_width=True):
+        st.session_state['authenticated'] = True
+        st.session_state['role'] = 'recruiter'
+        st.session_state['first_name'] = 'Reece'
+        logger.info("Logging in as Recruiter persona")
+        st.switch_page('pages/90_Recruiter_Home.py')
+
+    if st.button("Act as Evan Carter, Administrator", type="primary", use_container_width=True):
+        st.session_state['authenticated'] = True
+        st.session_state['role'] = 'administrator'
+        st.session_state['first_name'] = 'Evan'
+        logger.info("Logging in as Admin persona")
+        st.switch_page('pages/30_Admin_Dashboard.py')
+        
+
