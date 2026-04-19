@@ -159,6 +159,10 @@ st.markdown(
         <div class="persona-info">
             <p class="persona-name">Devon Williams</p>
             <p class="persona-role">System Administrator</p>
+        <div class="persona-avatar">A</div>
+        <div class="persona-info">
+            <p class="persona-name">Aaliyah</p>
+            <p class="persona-role">Competitive Player</p>
         </div>
     </div>
     """,
@@ -171,3 +175,10 @@ if st.button("Enter as Devon", type="primary", use_container_width=True):
     st.session_state["first_name"] = "Devon"
     logger.info("Logging in as System Administrator Persona")
     st.switch_page("pages/20_Admin_Home.py")
+if st.button("Enter as Aaliyah", type="primary", use_container_width=True):
+    st.session_state["authenticated"] = True
+    st.session_state["role"] = "competitive_player"
+    st.session_state["first_name"] = "Aaliyah"
+    st.session_state["player_id"] = 3
+    logger.info("Logging in as Competitive Player Persona")
+    st.switch_page("pages/11_Leaderboard.py")
