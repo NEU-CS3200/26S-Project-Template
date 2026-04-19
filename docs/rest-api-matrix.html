@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Bostonability REST API Matrix</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Bostonability REST API Matrix</h1>
+</header>
+<h1 id="bostonability-rest-api-matrix-phase-3">Bostonability REST API
+Matrix (Phase 3)</h1>
+<p>Revised from the Phase 3 submission template after cross-checking
+against Phase 2 personas, user stories, and SQL queries.</p>
+<h2 id="personas">Personas</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Paul</td>
+<td>Paul Baker</td>
+<td>Urban accessibility policy analyst</td>
+</tr>
+<tr>
+<td>Wilson</td>
+<td>Wilson Lampisyobiford</td>
+<td>System administrator</td>
+</tr>
+<tr>
+<td>Sally</td>
+<td>Sally Locke</td>
+<td>Wheelchair user / resident</td>
+</tr>
+<tr>
+<td>John</td>
+<td>John Marcus</td>
+<td>Daily cyclist commuter</td>
+</tr>
+</tbody>
+</table>
+<p>Tag format: <code>[persona-story_num]</code>,
+e.g. <code>[Paul-2]</code> = Paul’s 2nd user story.</p>
+<h2 id="matrix">Matrix</h2>
+<h3 id="blueprint-users">Blueprint: <code>users</code></h3>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th>Resource</th>
+<th>GET</th>
+<th>POST</th>
+<th>PUT</th>
+<th>DELETE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/users</code></td>
+<td>List all users <code>[Wilson-1]</code></td>
+<td>Create user <code>[Wilson-1]</code></td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td><code>/users/{id}</code></td>
+<td>View user info <code>[Wilson-1][Sally-5]</code></td>
+<td>n/a</td>
+<td>Update user <code>[Wilson-1][Sally-5]</code></td>
+<td>Delete user <code>[Wilson-1]</code></td>
+</tr>
+<tr>
+<td><code>/users/{id}/roles</code></td>
+<td>View roles <code>[Wilson-1]</code></td>
+<td>n/a</td>
+<td>Update role <code>[Wilson-1]</code></td>
+<td>n/a</td>
+</tr>
+<tr>
+<td><code>/users/{id}/disabilities</code></td>
+<td>View disabilities <code>[Sally-5]</code></td>
+<td>Add disability <code>[Sally-5]</code></td>
+<td>Update preferences <code>[Sally-5]</code></td>
+<td>Remove disability <code>[Sally-5]</code></td>
+</tr>
+<tr>
+<td><code>/users/{id}/actions</code></td>
+<td>View user action log <code>[Wilson-2]</code></td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+<h3 id="blueprint-reports">Blueprint: <code>reports</code></h3>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th>Resource</th>
+<th>GET</th>
+<th>POST</th>
+<th>PUT</th>
+<th>DELETE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/reports</code></td>
+<td>List / filter reports (supports <code>?type=</code>,
+<code>?date_from=</code>, <code>?issue_type=</code>)
+<code>[Paul-2][Wilson-3][John-1][John-5]</code></td>
+<td>Create report <code>[John-2]</code></td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td><code>/reports/{id}</code></td>
+<td>View report <code>[Wilson-4][John-3]</code></td>
+<td>n/a</td>
+<td>Update report <code>[Wilson-4][John-3]</code></td>
+<td>Delete report <code>[Wilson-4][John-4]</code></td>
+</tr>
+<tr>
+<td><code>/reports/mine/{user_id}</code></td>
+<td>View a user’s own reports <code>[John-3][John-4]</code></td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td><code>/reports/high-priority</code></td>
+<td>View high-priority reports <code>[Paul-6]</code></td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td><code>/reports/invalid</code></td>
+<td>View reports with missing/invalid fields
+<code>[Wilson-3]</code></td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+<h3 id="blueprint-locations_tickets">Blueprint:
+<code>locations_tickets</code></h3>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th>Resource</th>
+<th>GET</th>
+<th>POST</th>
+<th>PUT</th>
+<th>DELETE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/tickets</code></td>
+<td>List tickets <code>[Paul-3][Wilson-5]</code></td>
+<td>Create ticket <code>[Wilson-4]</code></td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td><code>/tickets/{id}</code></td>
+<td>View ticket <code>[Paul-3][Wilson-5]</code></td>
+<td>n/a</td>
+<td>Update ticket <code>[Paul-3][Paul-6]</code></td>
+<td>Delete ticket <code>[Wilson-4]</code></td>
+</tr>
+<tr>
+<td><code>/locations</code></td>
+<td>List locations <code>[Sally-1][John-6]</code></td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td><code>/locations/{id}</code></td>
+<td>View location <code>[Sally-2][John-6]</code></td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td><code>/locations/{id}/obstructions</code></td>
+<td>View obstructions at a location <code>[Sally-1..6]</code></td>
+<td>Add obstruction <code>[Wilson-4]</code></td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td><code>/locations/{id}/obstructions/{obstruction_id}</code></td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+<td>Remove obstruction <code>[Wilson-4]</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="blueprint-analytics">Blueprint: <code>analytics</code></h3>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th>Resource</th>
+<th>GET</th>
+<th>POST</th>
+<th>PUT</th>
+<th>DELETE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/analytics/issues-by-neighborhood</code></td>
+<td>Counts per neighborhood × issue type
+<code>[Paul-1][Wilson-5]</code></td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td><code>/analytics/trends</code></td>
+<td>Monthly trend of new reports <code>[Paul-5]</code></td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td><code>/analytics/resolution-summary</code></td>
+<td>Resolved vs unresolved ticket counts
+<code>[Paul-3][Wilson-5]</code></td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td><code>/analytics/high-priority</code></td>
+<td>High-priority report summary <code>[Paul-6]</code></td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td><code>/analytics/export</code></td>
+<td>Export filtered data as CSV/JSON
+<code>[Paul-4][Wilson-6]</code></td>
+<td>n/a</td>
+<td>n/a</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+<h2 id="phase-3-requirement-check">Phase 3 requirement check</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>Target</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Flask Blueprints</td>
+<td>≥ 4</td>
+<td>4 ✓</td>
+</tr>
+<tr>
+<td>Routes per blueprint</td>
+<td>≥ 5</td>
+<td>users 8, reports 9, locations_tickets 10, analytics 5 ✓</td>
+</tr>
+<tr>
+<td>Total routes</td>
+<td>20–25</td>
+<td>~32 (counting each HTTP verb) ✓</td>
+</tr>
+<tr>
+<td>POST routes</td>
+<td>≥ 2</td>
+<td>5 ✓</td>
+</tr>
+<tr>
+<td>PUT routes</td>
+<td>≥ 2</td>
+<td>5 ✓</td>
+</tr>
+<tr>
+<td>DELETE routes</td>
+<td>≥ 2</td>
+<td>5 ✓</td>
+</tr>
+<tr>
+<td>POST/PUT/DELETE spread across ≥ 2 blueprints</td>
+<td>yes</td>
+<td>users, reports, locations_tickets ✓</td>
+</tr>
+</tbody>
+</table>
+<h2 id="changes-from-the-original-submission-template-matrix">Changes
+from the original submission-template matrix</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>#</th>
+<th>Change</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Added</strong> <code>GET /users/{id}/actions</code></td>
+<td>Wilson-2 (“view logs of user actions”) had no endpoint. Matches the
+<code>action_log</code> entity in Wilson’s persona ER diagram (Phase 2
+p.18). <strong>Requires <code>action_log</code> table</strong> — flag to
+DDL owner.</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Retagged</strong> <code>/users/{id}</code> and
+<code>/users/{id}/disabilities</code> from <code>[Sally-6]</code> →
+<code>[Sally-5]</code></td>
+<td>Sally-5 is about wheelchair dimensions vs curb height, which needs
+disability profile data. Sally-6 is about blocked gates, which is an
+obstruction-level question.</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Added</strong> <code>[John-5]</code> to
+<code>GET /reports</code> with a <code>?type=bike_theft</code>
+filter</td>
+<td>John-5 (“view reported bike theft locations”) was not tagged. SQL
+4.5 shows it is <code>SELECT … WHERE report_type = 'bike_theft'</code>,
+so it rides on <code>/reports</code> via query param.</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Removed</strong> <code>[Paul-2]</code> from
+<code>/analytics/trends</code></td>
+<td>Paul-2 is “filter reports by date and issue type” (SQL 1.2 →
+<code>/reports</code> with query params), not trend data. Paul-5 is
+trends.</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Removed</strong> John tags from
+<code>/locations/{id}/obstructions</code> routes</td>
+<td>John-2 is a plow-request insert into <code>report</code> (SQL 4.2),
+not into <code>obstructions</code>. John-3 is an update of
+<code>report</code> (SQL 4.3), not an obstruction removal. Those
+obstruction routes are admin-only.</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>Added</strong> <code>[Wilson-5]</code> to
+<code>/tickets</code>, <code>/tickets/{id}</code>,
+<code>/analytics/issues-by-neighborhood</code>,
+<code>/analytics/resolution-summary</code></td>
+<td>Wilson-5 is “aggregated statistics on reports, tickets, usage” (SQL
+2.5). These analytics endpoints serve that story.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="open-items-for-the-team">Open items for the team</h2>
+<ul>
+<li><strong>DDL gap — <code>action_log</code> table</strong>: Wilson-2
+needs this. Columns implied by the ERD: <code>log_id</code>,
+<code>user_id</code> (FK), <code>action_type</code>,
+<code>log_description</code>, <code>timestamp</code>.</li>
+<li><strong>DDL gap — <code>report.past_report_status</code></strong>:
+Phase 2 SQL 2.5 and 4.3 both reference it, but it is not in the
+committed <code>bridget/add-ddl</code> schema.</li>
+<li><strong>Query-param contract for <code>/reports</code></strong>: the
+matrix now leans on <code>?type=</code>, <code>?date_from=</code>,
+<code>?date_to=</code>, <code>?issue_type=</code>,
+<code>?status=</code>. Document these in the route handler so the
+frontend team has a clear spec.</li>
+</ul>
+</body>
+</html>
