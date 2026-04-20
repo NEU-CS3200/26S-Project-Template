@@ -65,6 +65,45 @@ def classification_nav():
     )
 
 
+# ---- Role: label_head -------------------------------------------------------
+
+def label_head_home_nav():
+    st.sidebar.page_link(
+        "pages/30_Label_Head_Home.py", label="Label Head Home", icon="🎵"
+    )
+
+
+def royalty_splits_nav():
+    st.sidebar.page_link(
+        "pages/31_Royalty_Splits.py", label="Royalty Splits", icon="💸"
+    )
+
+
+def asset_tracker_nav():
+    st.sidebar.page_link(
+        "pages/32_Asset_Tracker.py", label="Asset Tracker", icon="📂"
+    )
+
+
+def release_overview_nav():
+    st.sidebar.page_link(
+        "pages/33_Release_Overview.py", label="Release Overview", icon="📀"
+    )
+
+# ---- Role: data_analyst -----------------------------------------------------
+
+def data_analyst_home_nav():
+    st.sidebar.page_link("pages/10_Data_Analyst_Home.py", label="Analyst Dashboard", icon="📊")
+
+def data_analyst_platform_nav():
+    st.sidebar.page_link("pages/11_Platform_Performance.py", label="Platform Metrics", icon="💻")
+
+def data_analyst_locations_nav():
+    st.sidebar.page_link("pages/12_Listener_Locations.py", label="Listener Locations", icon="🗺️")
+
+def data_analyst_engagement_nav():
+    st.sidebar.page_link("pages/13_Track_Engagement.py", label="Track Engagement", icon="⏭️")
+
 # ---- Role: administrator ----------------------------------------------------
 
 def admin_home_nav():
@@ -86,7 +125,7 @@ def SideBarLinks(show_home=False):
     """
 
     # Logo appears at the top of the sidebar on every page
-    st.sidebar.image("assets/logo.png", width=150)
+    st.sidebar.image("assets/brand/audiovate_logo.png", width=150)
 
     # If no one is logged in, send them to the Home (login) page
     if "authenticated" not in st.session_state:
@@ -111,9 +150,22 @@ def SideBarLinks(show_home=False):
             api_test_nav()
             classification_nav()
 
+        if st.session_state["role"] == "label_head":
+            label_head_home_nav()
+            royalty_splits_nav()
+            asset_tracker_nav()
+            release_overview_nav()
+
         if st.session_state["role"] == "administrator":
             admin_home_nav()
             ml_model_mgmt_nav()
+
+        
+        if st.session_state["role"] == "data_analyst":
+            data_analyst_home_nav()
+            data_analyst_platform_nav()
+            data_analyst_locations_nav()
+            data_analyst_engagement_nav()
 
     # About link appears at the bottom for all roles
     about_page_nav()
