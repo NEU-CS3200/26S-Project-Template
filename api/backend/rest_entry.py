@@ -1,18 +1,21 @@
-from flask import Flask
-from dotenv import load_dotenv
-import os
 import logging
+import os
+
+from dotenv import load_dotenv
+from flask import Flask
 
 from backend.db_connection import init_app as init_db
-from backend.simple.simple_routes import simple_routes
-from backend.ngos.ngo_routes import ngos
+from backend.courts.court_routes import courts
+from backend.players.player_routes import players
+from backend.tournaments.tournament_routes import tournaments_bp
+from backend.analytics.analytics_routes import analytics
 
 
 def create_app():
     app = Flask(__name__)
 
     app.logger.setLevel(logging.DEBUG)
-    app.logger.info('API startup')
+    app.logger.info("API startup")
 
     # Load environment variables from the .env file so they are
     # accessible via os.getenv() below.
@@ -35,7 +38,9 @@ def create_app():
     # Register the routes from each Blueprint with the app object
     # and give a url prefix to each.
     app.logger.info("create_app(): registering blueprints")
-    app.register_blueprint(simple_routes)
-    app.register_blueprint(ngos, url_prefix="/ngo")
+    app.register_blueprint(courts, url_prefix="/court")
+    app.register_blueprint(players, url_prefix="/player")
+    app.register_blueprint(tournaments_bp, url_prefix="/tournament")
+    app.register_blueprint(analytics, url_prefix="/analytics")
 
     return app

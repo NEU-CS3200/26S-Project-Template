@@ -1,72 +1,194 @@
-##################################################
-# This is the main/entry-point file for the
-# sample application for your project
-##################################################
-
-# Set up basic logging infrastructure
 import logging
-logging.basicConfig(format='%(filename)s:%(lineno)s:%(levelname)s -- %(message)s', level=logging.INFO)
+
+logging.basicConfig(
+    format="%(filename)s:%(lineno)s:%(levelname)s -- %(message)s", level=logging.INFO
+)
 logger = logging.getLogger(__name__)
 
-# import the main streamlit library as well
-# as SideBarLinks function from src/modules folder
 import streamlit as st
+
 from modules.nav import SideBarLinks
+from modules.styles import inject_css
 
-# streamlit supports regular and wide layout (how the controls
-# are organized/displayed on the screen).
-st.set_page_config(layout='wide')
+st.set_page_config(layout="wide", page_title="HoopSpot")
 
-# If a user is at this page, we assume they are not
-# authenticated.  So we change the 'authenticated' value
-# in the streamlit session_state to false.
-st.session_state['authenticated'] = False
+st.session_state["authenticated"] = False
 
-# Use the SideBarLinks function from src/modules/nav.py to control
-# the links displayed on the left-side panel.
-# IMPORTANT: ensure src/.streamlit/config.toml sets
-# showSidebarNavigation = false in the [client] section
 SideBarLinks(show_home=True)
 
-# ***************************************************
-#    The major content of this page
-# ***************************************************
+# ---------------------------------------------------------------------------
+# Page-specific CSS
+# ---------------------------------------------------------------------------
+HERO_CSS = """
+.stApp {
+    background: radial-gradient(
+        ellipse at 50% 0%,
+        rgba(249, 115, 22, 0.06) 0%,
+        transparent 50%
+    );
+}
+.block-container {
+    max-width: 540px !important;
+    padding-top: 16vh !important;
+}
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: rgba(249, 115, 22, 0.1);
+    border: 1px solid rgba(249, 115, 22, 0.2);
+    color: #FB923C;
+    font-size: 0.8rem;
+    font-weight: 500;
+    font-family: 'Outfit', sans-serif;
+    margin-bottom: 1.5rem;
+}
+.hero-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+    color: #F1F5F9;
+    margin-bottom: 0.5rem;
+}
+.hero-accent {
+    background: linear-gradient(135deg, #F97316, #FB923C);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.hero-tagline {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.15rem;
+    color: #64748B;
+    margin-bottom: 3rem;
+    font-weight: 400;
+}
+.persona-card {
+    background: linear-gradient(
+        135deg,
+        rgba(249, 115, 22, 0.06) 0%,
+        rgba(22, 32, 50, 0.8) 100%
+    );
+    border: 1px solid rgba(249, 115, 22, 0.12);
+    border-radius: 16px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.persona-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #F97316, #EA580C);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+}
+.persona-info { flex: 1; }
+.persona-name {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #F1F5F9;
+    margin: 0;
+    line-height: 1.2;
+}
+.persona-role {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.8rem;
+    color: #94A3B8;
+    font-weight: 400;
+    margin: 2px 0 0 0;
+}
+"""
+
+st.markdown(inject_css(HERO_CSS), unsafe_allow_html=True)
 
 logger.info("Loading the Home page of the app")
-st.title('CS 3200 Project Template')
-st.write('#### Hi! As which user would you like to log in?')
 
-# For each of the user personas for which we are implementing
-# functionality, we put a button on the screen that the user
-# can click to MIMIC logging in as that mock user.
+# ---------------------------------------------------------------------------
+# Hero section
+# ---------------------------------------------------------------------------
+st.markdown(
+    """
+    <div class="hero-badge">Court Finder</div>
+    <div class="hero-title">Hoop<span class="hero-accent">Spot</span></div>
+    <div class="hero-tagline">Pick up. Check in. Run it back.</div>
+    """,
+    unsafe_allow_html=True,
+)
 
-if st.button("Act as John, a Political Strategy Advisor",
-             type='primary',
-             use_container_width=True):
-    # when user clicks the button, they are now considered authenticated
-    st.session_state['authenticated'] = True
-    # we set the role of the current user
-    st.session_state['role'] = 'pol_strat_advisor'
-    # we add the first name of the user (so it can be displayed on
-    # subsequent pages).
-    st.session_state['first_name'] = 'John'
-    # finally, we ask streamlit to switch to another page, in this case, the
-    # landing page for this particular user type
-    logger.info("Logging in as Political Strategy Advisor Persona")
-    st.switch_page('pages/00_Pol_Strat_Home.py')
+# ---------------------------------------------------------------------------
+# Persona selection
+# ---------------------------------------------------------------------------
+st.markdown("##### Choose a persona")
 
-if st.button('Act as Mohammad, a USAID Worker',
-             type='primary',
-             use_container_width=True):
-    st.session_state['authenticated'] = True
-    st.session_state['role'] = 'usaid_worker'
-    st.session_state['first_name'] = 'Mohammad'
-    st.switch_page('pages/10_USAID_Worker_Home.py')
+st.markdown(
+    """
+    <div class="persona-card">
+        <div class="persona-avatar">MR</div>
+        <div class="persona-info">
+            <p class="persona-name">Marcus Reyes</p>
+            <p class="persona-role">Pickup Player</p>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
-if st.button('Act as System Administrator',
-             type='primary',
-             use_container_width=True):
-    st.session_state['authenticated'] = True
-    st.session_state['role'] = 'administrator'
-    st.session_state['first_name'] = 'SysAdmin'
-    st.switch_page('pages/20_Admin_Home.py')
+if st.button("Enter as Marcus", type="primary", use_container_width=True):
+    st.session_state["authenticated"] = True
+    st.session_state["role"] = "pickup_player"
+    st.session_state["first_name"] = "Marcus"
+    st.session_state["player_id"] = 1
+    logger.info("Logging in as Pickup Player Persona")
+    st.switch_page("pages/00_Pickup_Home.py")
+
+st.markdown(
+    """
+    <div class="persona-card">
+        <div class="persona-avatar">A</div>
+        <div class="persona-info">
+            <p class="persona-name">Aaliyah</p>
+            <p class="persona-role">Competitive Player</p>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+if st.button("Enter as Aaliyah", type="primary", use_container_width=True):
+    st.session_state["authenticated"] = True
+    st.session_state["role"] = "competitive_player"
+    st.session_state["first_name"] = "Aaliyah"
+    st.session_state["player_id"] = 3
+    logger.info("Logging in as Competitive Player Persona")
+    st.switch_page("pages/11_Leaderboard.py")
+
+st.markdown(
+    """
+    <div class="persona-card">
+        <div class="persona-avatar">DW</div>
+        <div class="persona-info">
+            <p class="persona-name">Devon Williams</p>
+            <p class="persona-role">System Administrator</p>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+if st.button("Enter as Devon", type="primary", use_container_width=True):
+    st.session_state["authenticated"] = True
+    st.session_state["role"] = "administrator"
+    st.session_state["first_name"] = "Devon"
+    logger.info("Logging in as System Administrator Persona")
+    st.switch_page("pages/20_Admin_Home.py")

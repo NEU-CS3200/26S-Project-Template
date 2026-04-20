@@ -1,8 +1,9 @@
-import streamlit as st
 import requests
+import streamlit as st
+
 from modules.nav import SideBarLinks
 
-st.set_page_config(layout='wide')
+st.set_page_config(layout="wide")
 
 # Initialize sidebar
 SideBarLinks()
@@ -75,7 +76,7 @@ else:
             )
 
     except requests.exceptions.RequestException as e:
-        st.error(f"Error connecting to the API: {str(e)}")
+        st.error(f"Error connecting to the API: {e!s}")
         st.info("Please ensure the API server is running")
 
 # Add a button to return to the NGO Directory
