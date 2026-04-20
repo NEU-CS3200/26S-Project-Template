@@ -1,6 +1,5 @@
-# Idea borrowed from https://github.com/fsmosca/sample-streamlit-authenticator
-
-# This file has functions to add links to the left sidebar based on the user's role.
+# Navigation control for all roles in NutriTracker
+# Role-based links are rendered based on st.session_state["role"] set in Home.py
 
 import streamlit as st
 
@@ -11,70 +10,64 @@ def home_nav():
     st.sidebar.page_link("Home.py", label="Home", icon="🏠")
 
 
-def about_page_nav():
-    st.sidebar.page_link("pages/30_About.py", label="About", icon="🧠")
+# ---- Role: performer --------------------------------------------------------
+
+def performer_home_nav():
+    st.sidebar.page_link("pages/10_Performer_Home.py", label="Jordan Home", icon="🎤")
 
 
-# ---- Role: pol_strat_advisor ------------------------------------------------
-
-def pol_strat_home_nav():
-    st.sidebar.page_link(
-        "pages/00_Pol_Strat_Home.py", label="Political Strategist Home", icon="👤"
-    )
+def performer_location_nav():
+    st.sidebar.page_link("pages/11_Performer_Location_Map.py", label="Dining Locations", icon="🍛")
 
 
-def world_bank_viz_nav():
-    st.sidebar.page_link(
-        "pages/01_World_Bank_Viz.py", label="World Bank Visualization", icon="🏦"
-    )
+def performer_menu_nav():
+    st.sidebar.page_link("pages/12_Performer_Menu_Browse.py", label="Menu Browse", icon="📖")
 
 
-def map_demo_nav():
-    st.sidebar.page_link("pages/02_Map_Demo.py", label="Map Demonstration", icon="🗺️")
+def performer_saved_meals_nav():
+    st.sidebar.page_link("pages/13_Performer_Saved_Meals.py", label="Saved Meals", icon="⭐")
 
 
-# ---- Role: usaid_worker -----------------------------------------------------
+# ---- Role: athlete ----------------------------------------------------------
 
-def usaid_worker_home_nav():
-    st.sidebar.page_link(
-        "pages/10_USAID_Worker_Home.py", label="USAID Worker Home", icon="🏠"
-    )
+def athlete_home_nav():
+    st.sidebar.page_link("pages/20_Athlete_Home.py", label="Jason Home", icon="⚽")
 
 
-def ngo_directory_nav():
-    st.sidebar.page_link("pages/14_NGO_Directory.py", label="NGO Directory", icon="📁")
+def athlete_daily_nutrition_nav():
+    st.sidebar.page_link("pages/21_Athlete_Daily_Nutrition.py", label="Daily Nutrition", icon="📊")
 
 
-def add_ngo_nav():
-    st.sidebar.page_link("pages/15_Add_NGO.py", label="Add New NGO", icon="➕")
+def athlete_log_meal_nav():
+    st.sidebar.page_link("pages/22_Athlete_Log_Meal.py", label="Log Meal", icon="📝")
 
 
-def prediction_nav():
-    st.sidebar.page_link(
-        "pages/11_Prediction.py", label="Regression Prediction", icon="📈"
-    )
+def athlete_weekly_history_nav():
+    st.sidebar.page_link("pages/23_Athlete_Weekly_History.py", label="Weekly History", icon="📈")
 
 
-def api_test_nav():
-    st.sidebar.page_link("pages/12_API_Test.py", label="Test the API", icon="🛜")
+# ---- Role: analyst ----------------------------------------------------------
+
+def analyst_home_nav():
+    st.sidebar.page_link("pages/30_Analyst_Home.py", label="Immanuel Home", icon="📊")
 
 
-def classification_nav():
-    st.sidebar.page_link(
-        "pages/13_Classification.py", label="Classification Demo", icon="🌺"
-    )
+def analyst_filter_visualize_nav():
+    st.sidebar.page_link("pages/31_Analyst_Filter_Visualize.py", label="Filter & Visualize", icon="📉")
+
+
+def analyst_export_config_nav():
+    st.sidebar.page_link("pages/32_Analyst_Export_Config.py", label="Export Config", icon="📁")
+
+
+def analyst_outliers_nav():
+    st.sidebar.page_link("pages/33_Analyst_Outliers.py", label="Outlier Detection", icon="🎯")
 
 
 # ---- Role: administrator ----------------------------------------------------
 
 def admin_home_nav():
-    st.sidebar.page_link("pages/20_Admin_Home.py", label="System Admin", icon="🖥️")
-
-
-def ml_model_mgmt_nav():
-    st.sidebar.page_link(
-        "pages/21_ML_Model_Mgmt.py", label="ML Model Management", icon="🏢"
-    )
+    st.sidebar.page_link("pages/40_Admin_Home.py", label="Laura Home", icon="🔐")
 
 
 # ---- Sidebar assembly -------------------------------------------------------
@@ -98,28 +91,35 @@ def SideBarLinks(show_home=False):
 
     if st.session_state["authenticated"]:
 
-        if st.session_state["role"] == "pol_strat_advisor":
-            pol_strat_home_nav()
-            world_bank_viz_nav()
-            map_demo_nav()
+        # Performer persona (Jordan Carter)
+        if st.session_state["role"] == "performer":
+            performer_home_nav()
+            performer_location_nav()
+            performer_menu_nav()
+            performer_saved_meals_nav()
 
-        if st.session_state["role"] == "usaid_worker":
-            usaid_worker_home_nav()
-            ngo_directory_nav()
-            add_ngo_nav()
-            prediction_nav()
-            api_test_nav()
-            classification_nav()
+        # Athlete persona (Jason Batum)
+        elif st.session_state["role"] == "athlete":
+            athlete_home_nav()
+            athlete_daily_nutrition_nav()
+            athlete_log_meal_nav()
+            athlete_weekly_history_nav()
 
-        if st.session_state["role"] == "administrator":
+        # Analyst persona (Immanuel Hoffborne)
+        elif st.session_state["role"] == "analyst":
+            analyst_home_nav()
+            analyst_filter_visualize_nav()
+            analyst_export_config_nav()
+            analyst_outliers_nav()
+
+        # Administrator persona (Laura Smith)
+        elif st.session_state["role"] == "administrator":
             admin_home_nav()
-            ml_model_mgmt_nav()
-
-    # About link appears at the bottom for all roles
-    about_page_nav()
 
     if st.session_state["authenticated"]:
         if st.sidebar.button("Logout"):
             del st.session_state["role"]
             del st.session_state["authenticated"]
+            del st.session_state.get("user_id", None)
+            del st.session_state.get("first_name", None)
             st.switch_page("Home.py")
