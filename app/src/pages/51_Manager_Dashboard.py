@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
 
+import altair as alt
 import requests
 import streamlit as st
 
@@ -10,6 +11,12 @@ logger = logging.getLogger(__name__)
 
 API_BASE = "http://api:4000"
 DATE_RANGE_OPTIONS = ["Last 30 Days", "Last 90 Days", "Year to Date", "All Time"]
+NAVY = "#0B1F3A"
+BLUE = "#1E5AA8"
+SKY = "#5DADEC"
+TEAL = "#2AA7A5"
+GOLD = "#F2B84B"
+CORAL = "#E76F51"
 
 
 def fetch_json(path):
@@ -154,10 +161,21 @@ top_col, type_col = st.columns([1.2, 1])
 with top_col:
     st.subheader("Top Destinations")
     if top_destinations:
-        destination_chart = {
-            item["destination"]: item["booking_volume"] for item in top_destinations
-        }
-        st.bar_chart(destination_chart)
+        destination_chart = alt.Chart(alt.Data(values=top_destinations)).mark_bar(
+            color=BLUE,
+            cornerRadiusTopRight=4,
+            cornerRadiusBottomRight=4,
+        ).encode(
+            x=alt.X("booking_volume:Q", title="Booking Volume"),
+            y=alt.Y("destination:N", sort="-x", title="Destination"),
+            tooltip=[
+                alt.Tooltip("destination:N", title="Destination"),
+                alt.Tooltip("booking_volume:Q", title="Booking Volume"),
+                alt.Tooltip("trip_count:Q", title="Trips"),
+                alt.Tooltip("revenue:Q", title="Revenue", format=",.0f"),
+            ],
+        ).properties(height=260)
+        st.altair_chart(destination_chart, use_container_width=True)
 
         destination_table = [
             {
@@ -175,10 +193,24 @@ with top_col:
 with type_col:
     st.subheader("Trip Type Breakdown")
     if trip_type_breakdown:
-        trip_type_chart = {
-            item["trip_type"]: item["trip_count"] for item in trip_type_breakdown
-        }
-        st.bar_chart(trip_type_chart)
+        trip_type_chart = alt.Chart(alt.Data(values=trip_type_breakdown)).mark_bar(
+            cornerRadiusTopLeft=4,
+            cornerRadiusTopRight=4,
+        ).encode(
+            x=alt.X("trip_type:N", title="Trip Type", sort="-y"),
+            y=alt.Y("trip_count:Q", title="Trips"),
+            color=alt.Color(
+                "trip_type:N",
+                scale=alt.Scale(range=[SKY, TEAL, GOLD, CORAL]),
+                legend=None,
+            ),
+            tooltip=[
+                alt.Tooltip("trip_type:N", title="Trip Type"),
+                alt.Tooltip("trip_count:Q", title="Trips"),
+                alt.Tooltip("booking_volume:Q", title="Bookings"),
+            ],
+        ).properties(height=260)
+        st.altair_chart(trip_type_chart, use_container_width=True)
 
         trip_type_table = [
             {
@@ -194,11 +226,20 @@ with type_col:
 
 st.subheader("Booking Volume Over Time")
 if booking_trends:
-    line_chart_data = {
-        row["booking_month"]: row["booking_count"]
-        for row in booking_trends
-    }
-    st.line_chart(line_chart_data)
+    trend_chart = alt.Chart(alt.Data(values=booking_trends)).mark_line(
+        color=NAVY,
+        point=alt.OverlayMarkDef(color=NAVY, filled=True, size=60),
+        strokeWidth=3,
+    ).encode(
+        x=alt.X("booking_month:N", title="Booking Month"),
+        y=alt.Y("booking_count:Q", title="Bookings"),
+        tooltip=[
+            alt.Tooltip("booking_month:N", title="Booking Month"),
+            alt.Tooltip("booking_count:Q", title="Bookings"),
+        ],
+    ).properties(height=320)
+
+    st.altair_chart(trend_chart, use_container_width=True)
 
     st.caption(
         f"Using monthly booking totals from `/analytics/bookings/trends`. "

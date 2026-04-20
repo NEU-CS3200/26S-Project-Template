@@ -81,6 +81,9 @@ def ml_model_mgmt_nav():
 
 def manager_home_nav():
     st.sidebar.page_link("pages/50_Manager_Home.py", label="Manager Home", icon="🏬")
+    st.sidebar.page_link("pages/51_Manager_Dashboard.py", label="Manager Dashboard", icon="📊")
+    st.sidebar.page_link("pages/52_Vendor_Performance.py", label="Vendor Performance", icon="⭐")
+    st.sidebar.page_link("pages/53_Data_Quality_Review.py", label="Data Quality Review", icon="🧹")
 
 
 # ---- Sidebar assembly -------------------------------------------------------

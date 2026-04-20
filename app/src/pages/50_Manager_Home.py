@@ -4,24 +4,17 @@ from modules.nav import SideBarLinks
 
 logger = logging.getLogger(__name__)
 
-st.set_page_config(layout='wide')
+st.set_page_config(layout="wide")
 SideBarLinks()
 
-st.title(f"Welcome, {st.session_state.get('first_name', 'Karen')} Vick")
-st.write("### Manager Home")
+st.title(f"Welcome Manager, {st.session_state.get('first_name', 'Karen')}.")
+st.write("### What would you like to do today?")
 
-st.markdown(
-    """
-    Karen Vick is the manager persona for NorthStar. Her role is to monitor vendor-side
-    operations, review business performance, and keep an eye on data quality concerns
-    that affect the overall platform experience.
-    """
-)
+if st.button("View Manager Dashboard", type="primary", use_container_width=True):
+    st.switch_page("pages/51_Manager_Dashboard.py")
 
-st.subheader("Planned Manager Pages")
+if st.button("View Vendor Performance", type="primary", use_container_width=True):
+    st.switch_page("pages/52_Vendor_Performance.py")
 
-st.info("`51_Manager_Dashboard.py` — planned dashboard view for manager operations and summary metrics.")
-st.info("`52_Vendor_Performance.py` — planned view for vendor trends, engagement, and performance tracking.")
-st.info("`53_Data_Quality_Review.py` — planned review space for incomplete, inconsistent, or outdated data.")
-
-st.caption("These pages are referenced here for navigation planning and are not implemented yet.")
+if st.button("Review Data Quality Issues", type="primary", use_container_width=True):
+    st.switch_page("pages/53_Data_Quality_Review.py")

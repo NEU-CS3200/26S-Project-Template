@@ -1,6 +1,7 @@
 import logging
 from datetime import date, datetime
 
+import altair as alt
 import requests
 import streamlit as st
 
@@ -9,6 +10,9 @@ from modules.nav import SideBarLinks
 logger = logging.getLogger(__name__)
 
 API_BASE = "http://api:4000"
+BLUE = "#1E5AA8"
+TEAL = "#2AA7A5"
+GOLD = "#F2B84B"
 
 
 def fetch_vendor_analytics():
@@ -160,11 +164,26 @@ with chart_col1:
     )[:10]
 
     if booking_chart_rows:
-        booking_chart_data = {
-            f"#{row['vendor_id']} {row['vendor_name']}": row["booking_frequency"]
+        booking_chart_values = [
+            {
+                "vendor_label": f"#{row['vendor_id']} {row['vendor_name']}",
+                "booking_frequency": row["booking_frequency"],
+            }
             for row in booking_chart_rows
-        }
-        st.bar_chart(booking_chart_data)
+        ]
+        booking_chart = alt.Chart(alt.Data(values=booking_chart_values)).mark_bar(
+            color=TEAL,
+            cornerRadiusTopRight=4,
+            cornerRadiusBottomRight=4,
+        ).encode(
+            x=alt.X("booking_frequency:Q", title="Booking Frequency"),
+            y=alt.Y("vendor_label:N", sort="-x", title="Vendor"),
+            tooltip=[
+                alt.Tooltip("vendor_label:N", title="Vendor"),
+                alt.Tooltip("booking_frequency:Q", title="Booking Frequency"),
+            ],
+        ).properties(height=320)
+        st.altair_chart(booking_chart, use_container_width=True)
     else:
         st.warning("The analytics data did not include chartable booking frequency values.")
 
@@ -178,11 +197,26 @@ with chart_col2:
     )[:10]
 
     if rating_chart_rows:
-        rating_chart_data = {
-            f"#{row['vendor_id']} {row['vendor_name']}": row["avg_rating"]
+        rating_chart_values = [
+            {
+                "vendor_label": f"#{row['vendor_id']} {row['vendor_name']}",
+                "avg_rating": row["avg_rating"],
+            }
             for row in rating_chart_rows
-        }
-        st.bar_chart(rating_chart_data)
+        ]
+        rating_chart = alt.Chart(alt.Data(values=rating_chart_values)).mark_bar(
+            color=GOLD,
+            cornerRadiusTopRight=4,
+            cornerRadiusBottomRight=4,
+        ).encode(
+            x=alt.X("avg_rating:Q", title="Average Rating"),
+            y=alt.Y("vendor_label:N", sort="-x", title="Vendor"),
+            tooltip=[
+                alt.Tooltip("vendor_label:N", title="Vendor"),
+                alt.Tooltip("avg_rating:Q", title="Average Rating", format=".2f"),
+            ],
+        ).properties(height=320)
+        st.altair_chart(rating_chart, use_container_width=True)
     else:
         st.warning("No vendor rating values were available to chart from the current analytics response.")
 
