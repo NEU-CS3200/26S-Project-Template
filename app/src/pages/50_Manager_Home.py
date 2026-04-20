@@ -1,7 +1,5 @@
 import logging
-
 import streamlit as st
-
 from modules.nav import SideBarLinks
 
 logger = logging.getLogger(__name__)
