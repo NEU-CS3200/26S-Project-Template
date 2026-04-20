@@ -12,7 +12,7 @@ SideBarLinks(show_home=True)
 
 BASE_URL = "http://web-api:4000"
 
-# Neighborhood lookup — matches seed data in 01_DDL.sql
+# Neighborhood lookup - matches seed data in 01_DDL.sql
 NEIGHBORHOODS = {
     1: "Back Bay",
     2: "Mission Hill",
@@ -30,7 +30,7 @@ NEIGHBORHOODS = {
     14: "East Boston",
     15: "South Boston",
 }
-NEIGHBORHOOD_OPTIONS = [f"{nid} — {name}" for nid, name in NEIGHBORHOODS.items()]
+NEIGHBORHOOD_OPTIONS = [f"{nid} - {name}" for nid, name in NEIGHBORHOODS.items()]
 
 st.markdown("## Court Management")
 
@@ -63,7 +63,7 @@ if st.session_state.get("show_add_form"):
 
         hours        = st.text_input("Hours (e.g. 6 AM - 10 PM)")
         neighborhood = st.selectbox("Neighborhood", NEIGHBORHOOD_OPTIONS)
-        neighborhood_id = int(neighborhood.split(" — ")[0])
+        neighborhood_id = int(neighborhood.split(" - ")[0])
 
         col_sub, col_cancel = st.columns(2)
         with col_sub:
@@ -130,10 +130,10 @@ if courts:
 
     for court in courts:
         court_id  = court.get("CourtId")
-        name      = court.get("CourtName", "—")
-        address   = court.get("Address", "—")
+        name      = court.get("CourtName", "")
+        address   = court.get("Address", "")
         is_active = court.get("IsActive", True)
-        hoops     = court.get("HoopCount", "—")
+        hoops     = court.get("HoopCount", "")
 
         status_badge  = "🟢 Active"   if is_active else "🔴 Inactive"
         action_label  = "Deactivate"  if is_active else "Activate"
