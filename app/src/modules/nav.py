@@ -77,6 +77,12 @@ def ml_model_mgmt_nav():
     )
 
 
+# ---- Role: manager ----------------------------------------------------------
+
+def manager_home_nav():
+    st.sidebar.page_link("pages/50_Manager_Home.py", label="Manager Home", icon="🏬")
+
+
 # ---- Sidebar assembly -------------------------------------------------------
 
 def SideBarLinks(show_home=False):
@@ -114,6 +120,9 @@ def SideBarLinks(show_home=False):
         if st.session_state["role"] == "administrator":
             admin_home_nav()
             ml_model_mgmt_nav()
+
+        if st.session_state["role"] == "manager":
+            manager_home_nav()
 
     # About link appears at the bottom for all roles
     about_page_nav()
