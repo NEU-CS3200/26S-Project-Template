@@ -7,6 +7,7 @@ services:
     hostname: web-app
     volumes: ["./app/src:/appcode"]
     environment:
+      - PIN_API_BASE_URL=http://api:4000
       - WATCHPACK_POLLING=true
     ports:
       - 8501:8501

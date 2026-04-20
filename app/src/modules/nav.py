@@ -15,66 +15,50 @@ def about_page_nav():
     st.sidebar.page_link("pages/30_About.py", label="About", icon="🧠")
 
 
-# ---- Role: pol_strat_advisor ------------------------------------------------
+# ---- Role: date seeker ------------------------------------------------------
 
-def pol_strat_home_nav():
+def date_seeker_home_nav():
     st.sidebar.page_link(
-        "pages/00_Pol_Strat_Home.py", label="Political Strategist Home", icon="👤"
+        "pages/40_Date_Seeker_Home.py", label="Date Seeker Home", icon="💖"
     )
 
 
-def world_bank_viz_nav():
-    st.sidebar.page_link(
-        "pages/01_World_Bank_Viz.py", label="World Bank Visualization", icon="🏦"
-    )
+def date_seeker_pages_nav():
+    st.sidebar.page_link("pages/41_Discover_Venues.py", label="Discover & My Lists", icon="🔍")
+    st.sidebar.page_link("pages/43_My_Reviews.py", label="Reviews", icon="⭐")
 
 
-def map_demo_nav():
-    st.sidebar.page_link("pages/02_Map_Demo.py", label="Map Demonstration", icon="🗺️")
+# ---- Role: venue owner ------------------------------------------------------
+
+def venue_owner_home_nav():
+    st.sidebar.page_link("pages/10_Marcus_Home.py", label="Venue Owner Home", icon="🏪")
 
 
-# ---- Role: usaid_worker -----------------------------------------------------
-
-def usaid_worker_home_nav():
-    st.sidebar.page_link(
-        "pages/10_USAID_Worker_Home.py", label="USAID Worker Home", icon="🏠"
-    )
+def venue_owner_pages_nav():
+    st.sidebar.page_link("pages/11_Manage_Venue.py", label="My Venue", icon="✏️")
+    st.sidebar.page_link("pages/13_Flag_Reviews.py", label="Reviews & Reports", icon="💬")
+    st.sidebar.page_link("pages/15_New_Application.py", label="Submit Application", icon="📋")
 
 
-def ngo_directory_nav():
-    st.sidebar.page_link("pages/14_NGO_Directory.py", label="NGO Directory", icon="📁")
+# ---- Role: data analyst -----------------------------------------------------
+
+def data_analyst_home_nav():
+    st.sidebar.page_link("pages/20_Joey_Home.py", label="Analyst Home", icon="📊")
 
 
-def add_ngo_nav():
-    st.sidebar.page_link("pages/15_Add_NGO.py", label="Add New NGO", icon="➕")
+def data_analyst_pages_nav():
+    st.sidebar.page_link("pages/21_User_Signups.py", label="Analytics Dashboard", icon="📊")
 
 
-def prediction_nav():
-    st.sidebar.page_link(
-        "pages/11_Prediction.py", label="Regression Prediction", icon="📈"
-    )
-
-
-def api_test_nav():
-    st.sidebar.page_link("pages/12_API_Test.py", label="Test the API", icon="🛜")
-
-
-def classification_nav():
-    st.sidebar.page_link(
-        "pages/13_Classification.py", label="Classification Demo", icon="🌺"
-    )
-
-
-# ---- Role: administrator ----------------------------------------------------
+# ---- Role: admin ------------------------------------------------------------
 
 def admin_home_nav():
-    st.sidebar.page_link("pages/20_Admin_Home.py", label="System Admin", icon="🖥️")
+    st.sidebar.page_link("pages/30_Josh_Home.py", label="Admin Home", icon="🛡️")
 
 
-def ml_model_mgmt_nav():
-    st.sidebar.page_link(
-        "pages/21_ML_Model_Mgmt.py", label="ML Model Management", icon="🏢"
-    )
+def admin_pages_nav():
+    st.sidebar.page_link("pages/31_Manage_Tickets.py", label="People & Tickets",  icon="🎫")
+    st.sidebar.page_link("pages/34_Duplicate_Venues.py", label="Platform Tools",  icon="🛠️")
 
 
 # ---- Sidebar assembly -------------------------------------------------------
@@ -85,8 +69,8 @@ def SideBarLinks(show_home=False):
     The role is stored in st.session_state when the user logs in on Home.py.
     """
 
-    # Logo appears at the top of the sidebar on every page
-    st.sidebar.image("assets/logo.png", width=150)
+    # Show title in sidebar for a simple but clear project identity.
+    st.sidebar.markdown("## PinDate")
 
     # If no one is logged in, send them to the Home (login) page
     if "authenticated" not in st.session_state:
@@ -97,23 +81,19 @@ def SideBarLinks(show_home=False):
         home_nav()
 
     if st.session_state["authenticated"]:
-
-        if st.session_state["role"] == "pol_strat_advisor":
-            pol_strat_home_nav()
-            world_bank_viz_nav()
-            map_demo_nav()
-
-        if st.session_state["role"] == "usaid_worker":
-            usaid_worker_home_nav()
-            ngo_directory_nav()
-            add_ngo_nav()
-            prediction_nav()
-            api_test_nav()
-            classification_nav()
-
-        if st.session_state["role"] == "administrator":
+        role = st.session_state.get("role")
+        if role in ("date_planner", "date_seeker", "CUSTOMER"):
+            date_seeker_home_nav()
+            date_seeker_pages_nav()
+        elif role in ("venue_owner", "VENUE_OWNER"):
+            venue_owner_home_nav()
+            venue_owner_pages_nav()
+        elif role in ("data_analyst", "DATA_ANALYST"):
+            data_analyst_home_nav()
+            data_analyst_pages_nav()
+        elif role in ("admin", "ADMIN"):
             admin_home_nav()
-            ml_model_mgmt_nav()
+            admin_pages_nav()
 
     # About link appears at the bottom for all roles
     about_page_nav()
