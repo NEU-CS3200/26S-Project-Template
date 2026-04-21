@@ -3,9 +3,14 @@ from dotenv import load_dotenv
 import os
 import logging
 
+from backend.review.review_routes import review_routes
 from backend.db_connection import init_app as init_db
-from backend.simple.simple_routes import simple_routes
-from backend.ngos.ngo_routes import ngos
+from backend.attendee.attendee_routes import attendee_routes
+from backend.event.events_routes import events_routes
+from backend.organizer.organizer_routes import organizer_routes
+from backend.owner.owner_routes import owner_routes
+from backend.performer.performer_routes import performer_routes
+from backend.venue.venue_routes import venue_routes
 
 
 def create_app():
@@ -35,7 +40,13 @@ def create_app():
     # Register the routes from each Blueprint with the app object
     # and give a url prefix to each.
     app.logger.info("create_app(): registering blueprints")
-    app.register_blueprint(simple_routes)
-    app.register_blueprint(ngos, url_prefix="/ngo")
+    app.register_blueprint(attendee_routes, url_prefix="/attendee")
+    app.register_blueprint(events_routes, url_prefix="/event")
+    app.register_blueprint(organizer_routes, url_prefix="/organizer")
+    app.register_blueprint(owner_routes, url_prefix="/owner")
+    app.register_blueprint(performer_routes, url_prefix="/performer")
+    app.register_blueprint(review_routes, url_prefix="/review")
+    app.register_blueprint(venue_routes, url_prefix="/venue")
+    
 
     return app
