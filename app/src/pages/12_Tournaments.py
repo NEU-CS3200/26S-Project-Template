@@ -212,6 +212,118 @@ def build_bracket_html(matches):
                 f'height="{CARD_H * 2}" rx="8" '
                 f'fill="#1E293B" stroke="#334155" stroke-width="1"/>'
             )
+             # Divider between two players
+            lines.append(
+                f'<line x1="{x+8}" y1="{cy}" x2="{x+CARD_W-8}" y2="{cy}" '
+                f'stroke="#334155" stroke-width="1"/>'
+            )
+ 
+            def player_fill(p, is_top):
+                if status != "Completed":
+                    return "#94A3B8"
+                return "#4ADE80" if p["is_winner"] else "#475569"
+ 
+            def player_weight(p):
+                return "700" if p["is_winner"] and status == "Completed" else "400"
+ 
+            # Player 1 (top half)
+            p1_y = card_y + CARD_H / 2 + 4
+            lines.append(
+                f'<text x="{x+10}" y="{p1_y}" '
+                f'font-family="Outfit,sans-serif" font-size="11" '
+                f'fill="{player_fill(p1, True)}" '
+                f'font-weight="{player_weight(p1)}">'
+                f'{p1["name"][:18]}</text>'
+            )
+ 
+            # Player 2 (bottom half)
+            p2_y = cy + CARD_H / 2 + 4
+            lines.append(
+                f'<text x="{x+10}" y="{p2_y}" '
+                f'font-family="Outfit,sans-serif" font-size="11" '
+                f'fill="{player_fill(p2, False)}" '
+                f'font-weight="{player_weight(p2)}">'
+                f'{p2["name"][:18]}</text>'
+            )
+ 
+            # Winner crown icon for completed matches
+            if status == "Completed":
+                winner = p1 if p1["is_winner"] else p2
+                w_y = (card_y + CARD_H / 2 + 4) if p1["is_winner"] else (cy + CARD_H / 2 + 4)
+                lines.append(
+                    f'<text x="{x+CARD_W-16}" y="{w_y}" '
+                    f'font-family="Outfit,sans-serif" font-size="10" '
+                    f'fill="#4ADE80">✓</text>'
+                )
+ 
+        round_match_positions[round_num] = centre_ys
+ 
+        # ── Connector lines to next round ──────────────────────────────────
+        if col_idx < num_rounds - 1:
+            next_round_num = sorted_rounds[col_idx + 1]
+            next_match_dict = rounds[next_round_num]
+            next_sorted = sorted(next_match_dict.values(), key=lambda m: m["MatchOrder"])
+            next_total = len(next_sorted)
+            next_x = (col_idx + 1) * COL_W + 20
+ 
+            # Pair up current matches → next matches (2 feed into 1)
+            for ni, next_match in enumerate(next_sorted):
+                ny = slot_y(col_idx + 1, ni, next_total)
+                # The two feeders are matches ni*2 and ni*2+1
+                feeders = [ni * 2, ni * 2 + 1]
+                mid_x = x + CARD_W + GAP_X / 2
+ 
+                feeder_ys = []
+                for fi in feeders:
+                    if fi < len(centre_ys):
+                        fy = centre_ys[fi]
+                        feeder_ys.append(fy)
+                        # Horizontal stub out from card
+                        lines.append(
+                            f'<line x1="{x+CARD_W}" y1="{fy}" '
+                            f'x2="{mid_x}" y2="{fy}" '
+                            f'stroke="#334155" stroke-width="1.5"/>'
+                        )
+ 
+                if feeder_ys:
+                    top_y = min(feeder_ys)
+                    bot_y = max(feeder_ys)
+                    # Vertical bar joining the two stubs
+                    lines.append(
+                        f'<line x1="{mid_x}" y1="{top_y}" '
+                        f'x2="{mid_x}" y2="{bot_y}" '
+                        f'stroke="#334155" stroke-width="1.5"/>'
+                    )
+                    # Horizontal stub into next card
+                    lines.append(
+                        f'<line x1="{mid_x}" y1="{ny}" '
+                        f'x2="{next_x}" y2="{ny}" '
+                        f'stroke="#334155" stroke-width="1.5"/>'
+                    )
+ 
+    svg = (
+        f'<svg xmlns="http://www.w3.org/2000/svg" '
+        f'width="{svg_width}" height="{svg_height}" '
+        f'viewBox="0 0 {svg_width} {svg_height}">'
+        + "".join(lines)
+        + "</svg>"
+    )
+ 
+    html = f"""
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&display=swap');
+        body {{ margin: 0; background: transparent; }}
+        .bracket-wrap {{
+            background: #0F172A;
+            border-radius: 12px;
+            padding: 16px;
+            overflow-x: auto;
+        }}
+    </style>
+    <div class="bracket-wrap">{svg}</div>
+    """
+    return html, svg_height + 60
+ 
  
 # ---------------------------------------------------------------------------
 # Sidebar: player profile card
