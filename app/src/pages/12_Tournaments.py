@@ -1,24 +1,24 @@
 import logging
-
+ 
 import streamlit as st
 import streamlit.components.v1 as components
-
+ 
 st.set_page_config(layout="wide", page_title="HoopSpot - Tournaments")
-
+ 
 import requests
-
+ 
 from modules.nav import SideBarLinks
 from modules.styles import inject_css
-
+ 
 logging.basicConfig(
     format="%(filename)s:%(lineno)s:%(levelname)s -- %(message)s", level=logging.INFO
 )
 logger = logging.getLogger(__name__)
-
+ 
 API_BASE = "http://web-api:4000"
-
+ 
 SideBarLinks()
-
+ 
 # ---------------------------------------------------------------------------
 # Page-specific CSS
 # ---------------------------------------------------------------------------
@@ -60,20 +60,20 @@ PAGE_CSS = """
     color: #94A3B8;
 }
 """
-
+ 
 st.markdown(inject_css(PAGE_CSS), unsafe_allow_html=True)
-
+ 
 # ---------------------------------------------------------------------------
 # Session state
 # ---------------------------------------------------------------------------
 player_id = st.session_state.get("player_id", 3)
 first_name = st.session_state.get("first_name", "Aaliyah")
-
+ 
 # ---------------------------------------------------------------------------
 # Data fetching
 # ---------------------------------------------------------------------------
-
-
+ 
+ 
 def fetch_tournaments(status=None):
     try:
         params = {}
@@ -85,8 +85,8 @@ def fetch_tournaments(status=None):
     except requests.RequestException as e:
         logger.error(f"Failed to fetch tournaments: {e}")
         return []
-
-
+ 
+ 
 def fetch_brackets(tournament_id):
     try:
         resp = requests.get(
@@ -97,8 +97,8 @@ def fetch_brackets(tournament_id):
     except requests.RequestException as e:
         logger.error(f"Failed to fetch brackets for tournament {tournament_id}: {e}")
         return []
-
-
+ 
+ 
 def fetch_player(pid):
     try:
         resp = requests.get(f"{API_BASE}/player/players/{pid}", timeout=5)
@@ -107,8 +107,8 @@ def fetch_player(pid):
     except requests.RequestException as e:
         logger.error(f"Failed to fetch player {pid}: {e}")
         return None
-
-
+ 
+ 
 def register_for_tournament(tournament_id, pid):
     try:
         resp = requests.post(
@@ -121,7 +121,12 @@ def register_for_tournament(tournament_id, pid):
     except requests.RequestException as e:
         logger.error(f"Failed to register for tournament {tournament_id}: {e}")
         return False, str(e)
-
+ 
+ 
+# ---------------------------------------------------------------------------
+# Bracket HTML builder
+# ---------------------------------------------------------------------------
+ 
 def build_bracket_html(matches):
     """
     Turns flat match rows from the API into a visual single-elimination
@@ -165,43 +170,91 @@ def build_bracket_html(matches):
                 "is_winner": (not is_winner) if status == "Completed" else False,
             })
  
-    # Deduplicate players across matches within the same round.
-    # The mock data can assign a player to multiple Round 1 matches;
-    # we keep their first appearance and replace duplicates with TBD.
-    for r in rounds:
-        seen_in_round = set()
-        for mid in sorted(rounds[r].keys(), key=lambda x: rounds[r][x]["MatchOrder"]):
-            match = rounds[r][mid]
+    # ── Step 1: Deduplicate players within Round 1 ────────────────────────
+    # Each player can only appear in one match per round.
+    sorted_round_keys = sorted(rounds.keys())
+    if sorted_round_keys:
+        first_round = sorted_round_keys[0]
+        seen = set()
+        for mid in sorted(rounds[first_round].keys(),
+                          key=lambda x: rounds[first_round][x]["MatchOrder"]):
+            match = rounds[first_round][mid]
             cleaned = []
             for p in match["players"]:
-                if p["name"] not in seen_in_round:
-                    seen_in_round.add(p["name"])
+                if p["name"] not in seen:
+                    seen.add(p["name"])
                     cleaned.append(p)
                 else:
                     cleaned.append({"name": "TBD", "is_winner": False})
             match["players"] = cleaned
  
-    # Enforce winner advancement: players in round N+1 must be
-    # winners from round N. Replace any non-winners with TBD.
-    sorted_round_keys = sorted(rounds.keys())
-    for i in range(len(sorted_round_keys) - 1):
-        current_round = sorted_round_keys[i]
-        next_round = sorted_round_keys[i + 1]
+    # ── Step 2: Collect Round 1 winners in bracket order ──────────────────
+    r1_winners = []
+    if sorted_round_keys:
+        first_round = sorted_round_keys[0]
+        for mid in sorted(rounds[first_round].keys(),
+                          key=lambda x: rounds[first_round][x]["MatchOrder"]):
+            for p in rounds[first_round][mid]["players"]:
+                if p["is_winner"] and p["name"] != "TBD":
+                    r1_winners.append(p["name"])
+                    break  # one winner per match
  
-        # Collect winners from current round
-        winners = set()
-        for match in rounds[current_round].values():
-            for p in match["players"]:
-                if p["is_winner"]:
-                    winners.add(p["name"])
+    # ── Step 3: Rebuild all rounds after Round 1 from actual winners ───────
+    # This guarantees the bracket halves correctly (8→4→2→1) regardless of
+    # what the database stored for later rounds.
+    if len(sorted_round_keys) > 1 and r1_winners:
+        current_players = r1_winners
+        for r in sorted_round_keys[1:]:
+            existing_matches = sorted(
+                rounds[r].values(), key=lambda x: x["MatchOrder"]
+            )
+            new_round = {}
+            next_winners = []
  
-        # In next round, replace anyone not in winners with TBD
-        for match in rounds[next_round].values():
-            match["players"] = [
-                p if p["name"] in winners or p["name"] == "TBD"
-                else {"name": "TBD", "is_winner": p["is_winner"]}
-                for p in match["players"]
-            ]
+            for j in range(0, len(current_players), 2):
+                p1_name = current_players[j] if j < len(current_players) else "TBD"
+                p2_name = (current_players[j + 1]
+                           if j + 1 < len(current_players) else "TBD")
+                match_order = j // 2 + 1
+ 
+                # Reuse DB match id/status if available for this slot
+                slot = match_order - 1
+                if slot < len(existing_matches):
+                    ex = existing_matches[slot]
+                    match_id = ex["MatchId"]
+                    status = ex["MatchStatus"]
+                    # Use winner position from DB (index 0 or 1 won)
+                    ex_players = ex["players"]
+                    if status == "Completed" and ex_players:
+                        winner_pos = 0 if ex_players[0].get("is_winner") else 1
+                    else:
+                        winner_pos = -1
+                else:
+                    match_id = f"syn_{r}_{match_order}"
+                    status = "Scheduled"
+                    winner_pos = -1
+ 
+                players = [
+                    {"name": p1_name,
+                     "is_winner": status == "Completed" and winner_pos == 0},
+                    {"name": p2_name,
+                     "is_winner": status == "Completed" and winner_pos == 1},
+                ]
+                new_round[match_id] = {
+                    "MatchId": match_id,
+                    "MatchStatus": status,
+                    "MatchOrder": match_order,
+                    "players": players,
+                }
+ 
+                # Carry winner forward to next round
+                if status == "Completed" and winner_pos >= 0:
+                    next_winners.append(players[winner_pos]["name"])
+                else:
+                    next_winners.append("TBD")
+ 
+            rounds[r] = new_round
+            current_players = next_winners
  
     sorted_rounds = sorted(rounds.keys())
     num_rounds = len(sorted_rounds)
@@ -270,7 +323,8 @@ def build_bracket_html(matches):
                 f'height="{CARD_H * 2}" rx="8" '
                 f'fill="#1E293B" stroke="#334155" stroke-width="1"/>'
             )
-             # Divider between two players
+ 
+            # Divider between two players
             lines.append(
                 f'<line x1="{x+8}" y1="{cy}" x2="{x+CARD_W-8}" y2="{cy}" '
                 f'stroke="#334155" stroke-width="1"/>'
@@ -472,13 +526,13 @@ if player_data:
         """,
         unsafe_allow_html=True,
     )
-
+ 
 # ---------------------------------------------------------------------------
 # Header
 # ---------------------------------------------------------------------------
 st.title("Boston Tournaments")
 st.caption("Register for upcoming competitions and track your bracket progress")
-
+ 
 # ---------------------------------------------------------------------------
 # Status filter
 # ---------------------------------------------------------------------------
@@ -487,25 +541,24 @@ with col_filter:
     status_filter = st.selectbox(
         "Filter by Status", ["All", "Upcoming", "Ongoing", "Completed"]
     )
-
+ 
 # ---------------------------------------------------------------------------
 # Fetch tournaments
 # ---------------------------------------------------------------------------
 tournaments = fetch_tournaments(status_filter)
-
+ 
 if not tournaments:
     st.warning("No tournaments found. Make sure the API is running.")
 else:
-    # Summary metrics
     upcoming_count = sum(1 for t in tournaments if t.get("Status") == "Upcoming")
     ongoing_count = sum(1 for t in tournaments if t.get("Status") == "Ongoing")
     metric_cols = st.columns(3)
     metric_cols[0].metric("Total Tournaments", len(tournaments))
     metric_cols[1].metric("Upcoming", upcoming_count)
     metric_cols[2].metric("Ongoing", ongoing_count)
-
+ 
     st.markdown("---")
-
+ 
     # ---------------------------------------------------------------------------
     # Bracket dialog
     # ---------------------------------------------------------------------------
@@ -513,6 +566,7 @@ else:
     def show_bracket(tournament_id, tournament_name):
         st.subheader(tournament_name)
         matches = fetch_brackets(tournament_id)
+        st.json(matches)
  
         if not matches:
             st.info("No bracket data available yet.")
@@ -545,17 +599,17 @@ else:
         start = t.get("StartDate", "")
         end = t.get("EndDate", "")
         registered = t.get("RegisteredPlayers", 0)
-
+ 
         if status == "Upcoming":
             status_html = f'<span class="tournament-status-upcoming">{status}</span>'
         elif status == "Ongoing":
             status_html = f'<span class="tournament-status-ongoing">{status}</span>'
         else:
             status_html = f'<span class="tournament-status-completed">{status}</span>'
-
+ 
         with st.container(border=True):
             header_col, action_col = st.columns([7, 3])
-
+ 
             with header_col:
                 st.markdown(
                     f"""
@@ -583,10 +637,10 @@ else:
                     """,
                     unsafe_allow_html=True,
                 )
-
+ 
             with action_col:
                 btn_col1, btn_col2 = st.columns(2)
-
+ 
                 with btn_col1:
                     if status == "Upcoming":
                         if st.button("Register", key=f"reg_{tid}", use_container_width=True):
@@ -595,7 +649,7 @@ else:
                                 st.success("Registered!")
                             else:
                                 st.error(f"Error: {msg}")
-
+ 
                 with btn_col2:
                     if status in ("Ongoing", "Completed"):
                         if st.button("Bracket", key=f"bracket_{tid}", use_container_width=True):
