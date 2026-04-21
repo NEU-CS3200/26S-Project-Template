@@ -3,18 +3,18 @@ import streamlit as st
 import requests
 from datetime import datetime
 from modules.nav import SideBarLinks
- 
+
 logging.basicConfig(
     format="%(filename)s:%(lineno)s:%(levelname)s -- %(message)s", level=logging.INFO
 )
 logger = logging.getLogger(__name__)
- 
+
 st.set_page_config(layout="wide")
- 
+
 SideBarLinks(show_home=True)
- 
+
 BASE_URL = "http://web-api:4000"
- 
+
 # ── Quick stats fetch ────────────────────────────────────────────────────────
 def safe_fetch(endpoint):
     try:
@@ -22,13 +22,13 @@ def safe_fetch(endpoint):
         return r.json() if r.status_code == 200 else []
     except Exception:
         return []
- 
-courts        = safe_fetch("/admin/courts")
-flagged       = safe_fetch("/admin/reviews/flagged")
-user_flags    = safe_fetch("/admin/users/flagged")
- 
+
+courts        = safe_fetch("/court/courts")
+flagged       = safe_fetch("/court/reviews/flagged")
+user_flags    = safe_fetch("/player/players?flagged=true")
+
 total_courts    = len(courts) if isinstance(courts, list) else 0
-active_courts   = len([c for c in courts if isinstance(courts, list) and c.get("status") == "Active"]) if isinstance(courts, list) else 0
+active_courts   = len([c for c in courts if isinstance(courts, list) and c.get("IsActive")]) if isinstance(courts, list) else 0
 pending_reviews = len(flagged) if isinstance(flagged, list) else 0
 flagged_users   = len(user_flags) if isinstance(user_flags, list) else 0
  
