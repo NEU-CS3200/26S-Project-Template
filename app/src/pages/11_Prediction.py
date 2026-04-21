@@ -1,10 +1,10 @@
+import requests
+from modules.nav import SideBarLinks
+import streamlit as st
 import logging
 
 logger = logging.getLogger(__name__)
 
-import streamlit as st
-from modules.nav import SideBarLinks
-import requests
 
 st.set_page_config(layout="wide")
 
@@ -28,6 +28,6 @@ with col2:
 # prediction function via the REST API
 if st.button("Calculate Prediction", type="primary", use_container_width=True):
     logger.info(f"var_01 = {var_01}, var_02 = {var_02}")
-    results = requests.get(f"http://web-api:4000/prediction/{var_01}/{var_02}")
+    results = requests.get(f"http://web-api:4000/listings")
     json_results = results.json()
     st.dataframe(json_results)

@@ -10,6 +10,7 @@
 #------------------------------------------------------------
 import mysql.connector
 from flask import g, current_app
+from werkzeug.local import LocalProxy
 
 
 def get_db():
@@ -24,10 +25,14 @@ def get_db():
     return g.db
 
 
+# Request-scoped proxy to the active MySQL connection.
+db = LocalProxy(get_db)
+
+
 def close_db(e=None):
-    db = g.pop('db', None)
-    if db is not None:
-        db.close()
+    connection = g.pop('db', None)
+    if connection is not None:
+        connection.close()
 
 
 def init_app(app):
