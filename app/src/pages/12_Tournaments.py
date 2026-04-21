@@ -128,6 +128,9 @@ def build_bracket_html(matches):
     bracket rendered as an HTML/SVG component.
     """
     # ── Organise matches by round ──────────────────────────────────────────
+    # Each match gets exactly 2 unique players. The API returns one row per
+    # participant, so we add a player only if their name isn't already in
+    # the match and the match has fewer than 2 players.
     rounds = {}
     for m in matches:
         r = m.get("RoundNumber", 1)
@@ -140,10 +143,43 @@ def build_bracket_html(matches):
                 "MatchOrder": m.get("MatchOrder", 1),
                 "players": [],
             }
-        rounds[r][mid]["players"].append({
-            "name": m.get("PlayerName", "TBD"),
-            "is_winner": m.get("IsWinner", False),
-        })
+ 
+        player_name   = m.get("PlayerName", "TBD")
+        opponent_name = m.get("OpponentName", "TBD")
+        is_winner     = m.get("IsWinner", False)
+        status        = m.get("MatchStatus", "Scheduled")
+        existing      = [p["name"] for p in rounds[r][mid]["players"]]
+ 
+        # Add primary player
+        if player_name not in existing and len(rounds[r][mid]["players"]) < 2:
+            rounds[r][mid]["players"].append({
+                "name": player_name,
+                "is_winner": is_winner,
+            })
+            existing.append(player_name)
+ 
+        # Add opponent (winner is inverse when completed)
+        if opponent_name and opponent_name not in existing and len(rounds[r][mid]["players"]) < 2:
+            rounds[r][mid]["players"].append({
+                "name": opponent_name,
+                "is_winner": (not is_winner) if status == "Completed" else False,
+            })
+ 
+    # Deduplicate players across matches within the same round.
+    # The mock data can assign a player to multiple Round 1 matches;
+    # we keep their first appearance and replace duplicates with TBD.
+    for r in rounds:
+        seen_in_round = set()
+        for mid in sorted(rounds[r].keys(), key=lambda x: rounds[r][x]["MatchOrder"]):
+            match = rounds[r][mid]
+            cleaned = []
+            for p in match["players"]:
+                if p["name"] not in seen_in_round:
+                    seen_in_round.add(p["name"])
+                    cleaned.append(p)
+                else:
+                    cleaned.append({"name": "TBD", "is_winner": False})
+            match["players"] = cleaned
  
     sorted_rounds = sorted(rounds.keys())
     num_rounds = len(sorted_rounds)
