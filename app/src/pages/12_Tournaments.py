@@ -181,6 +181,28 @@ def build_bracket_html(matches):
                     cleaned.append({"name": "TBD", "is_winner": False})
             match["players"] = cleaned
  
+    # Enforce winner advancement: players in round N+1 must be
+    # winners from round N. Replace any non-winners with TBD.
+    sorted_round_keys = sorted(rounds.keys())
+    for i in range(len(sorted_round_keys) - 1):
+        current_round = sorted_round_keys[i]
+        next_round = sorted_round_keys[i + 1]
+ 
+        # Collect winners from current round
+        winners = set()
+        for match in rounds[current_round].values():
+            for p in match["players"]:
+                if p["is_winner"]:
+                    winners.add(p["name"])
+ 
+        # In next round, replace anyone not in winners with TBD
+        for match in rounds[next_round].values():
+            match["players"] = [
+                p if p["name"] in winners or p["name"] == "TBD"
+                else {"name": "TBD", "is_winner": p["is_winner"]}
+                for p in match["players"]
+            ]
+ 
     sorted_rounds = sorted(rounds.keys())
     num_rounds = len(sorted_rounds)
  
