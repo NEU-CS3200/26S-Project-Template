@@ -59,24 +59,6 @@ PAGE_CSS = """
     background: rgba(100,116,139,0.15);
     color: #94A3B8;
 }
-.bracket-round-label {
-    font-family: 'Outfit', sans-serif;
-    font-size: 0.65rem;
-    color: #64748B;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 6px;
-}
-.bracket-match-winner {
-    color: #4ADE80;
-    font-weight: 700;
-}
-.bracket-match-loser {
-    color: #64748B;
-}
-.bracket-match-pending {
-    color: #F1F5F9;
-}
 """
 
 st.markdown(inject_css(PAGE_CSS), unsafe_allow_html=True)
