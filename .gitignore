@@ -6,3 +6,5 @@ secrets/
 .env.local
 */logs/*
 .vscode/
+CLAUDE.md
+.claude/
