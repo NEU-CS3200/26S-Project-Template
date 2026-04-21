@@ -1,7 +1,3 @@
-
-import streamlit as st
-st.set_page_config(layout="wide", page_title="HoopSpot")
-
 import logging
 
 logging.basicConfig(
@@ -9,14 +5,14 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+import streamlit as st
 
 from modules.nav import SideBarLinks
 from modules.styles import inject_css
 
+st.set_page_config(layout="wide", page_title="HoopSpot")
 
-
-if "authenticated" not in st.session_state:
-    st.session_state["authenticated"] = False
+st.session_state["authenticated"] = False
 
 SideBarLinks(show_home=True)
 
@@ -156,6 +152,46 @@ if st.button("Enter as Marcus", type="primary", use_container_width=True):
     logger.info("Logging in as Pickup Player Persona")
     st.switch_page("pages/00_Pickup_Home.py")
 
+st.markdown(
+    """
+    <div class="persona-card">
+        <div class="persona-avatar">A</div>
+        <div class="persona-info">
+            <p class="persona-name">Aaliyah</p>
+            <p class="persona-role">Competitive Player</p>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+if st.button("Enter as Aaliyah", type="primary", use_container_width=True):
+    st.session_state["authenticated"] = True
+    st.session_state["role"] = "competitive_player"
+    st.session_state["first_name"] = "Aaliyah"
+    st.session_state["player_id"] = 3
+    logger.info("Logging in as Competitive Player Persona")
+    st.switch_page("pages/10_Competitive_Home.py")
+
+st.markdown(
+    """
+    <div class="persona-card">
+        <div class="persona-avatar">DW</div>
+        <div class="persona-info">
+            <p class="persona-name">Devon Williams</p>
+            <p class="persona-role">System Administrator</p>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+if st.button("Enter as Devon", type="primary", use_container_width=True):
+    st.session_state["authenticated"] = True
+    st.session_state["role"] = "administrator"
+    st.session_state["first_name"] = "Devon"
+    logger.info("Logging in as System Administrator Persona")
+    st.switch_page("pages/20_Admin_Home.py")
 
 st.markdown(
     """
@@ -163,7 +199,7 @@ st.markdown(
         <div class="persona-avatar">PN</div>
         <div class="persona-info">
             <p class="persona-name">Priya Nair</p>
-            <p class="persona-role">Courts Data Analyst</p>
+            <p class="persona-role">Data Analyst</p>
         </div>
     </div>
     """,
@@ -174,7 +210,5 @@ if st.button("Enter as Priya", type="primary", use_container_width=True):
     st.session_state["authenticated"] = True
     st.session_state["role"] = "data_analyst"
     st.session_state["first_name"] = "Priya"
-    st.session_state["player_id"] = 4
     logger.info("Logging in as Data Analyst Persona")
-    st.switch_page("pages/03_Analyst_Profile.py")
-
+    st.switch_page("pages/40_Analyst_Profile.py")
