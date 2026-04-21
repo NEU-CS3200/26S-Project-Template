@@ -127,6 +127,7 @@ def register_for_tournament(tournament_id, pid):
 # Bracket HTML builder
 # ---------------------------------------------------------------------------
  
+
 def build_bracket_html(matches):
     """
     Turns flat match rows from the API into a visual single-elimination
@@ -241,8 +242,14 @@ def build_bracket_html(matches):
                         winner_pos = -1
                 else:
                     match_id = f"syn_{r}_{match_order}"
-                    status = "Scheduled"
-                    winner_pos = -1
+                    # If other matches in this round are completed, this one
+                    # should be too — default winner to position 0
+                    any_completed = any(
+                        ex.get("MatchStatus") == "Completed"
+                        for ex in existing_matches
+                    )
+                    status = "Completed" if any_completed else "Scheduled"
+                    winner_pos = 0 if any_completed else -1
  
                 players = [
                     {"name": p1_name,
