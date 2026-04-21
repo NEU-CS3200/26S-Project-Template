@@ -37,39 +37,6 @@ def tournaments_nav():
     st.sidebar.page_link("pages/12_Tournaments.py", label="Tournaments", icon="🥇")
 
 
-# ---- Role: usaid_worker -----------------------------------------------------
-
-
-def usaid_worker_home_nav():
-    st.sidebar.page_link(
-        "pages/10_USAID_Worker_Home.py", label="USAID Worker Home", icon="🏠"
-    )
-
-
-def ngo_directory_nav():
-    st.sidebar.page_link("pages/14_NGO_Directory.py", label="NGO Directory", icon="📁")
-
-
-def add_ngo_nav():
-    st.sidebar.page_link("pages/15_Add_NGO.py", label="Add New NGO", icon="➕")
-
-
-def prediction_nav():
-    st.sidebar.page_link(
-        "pages/11_Prediction.py", label="Regression Prediction", icon="📈"
-    )
-
-
-def api_test_nav():
-    st.sidebar.page_link("pages/12_API_Test.py", label="Test the API", icon="🛜")
-
-
-def classification_nav():
-    st.sidebar.page_link(
-        "pages/13_Classification.py", label="Classification Demo", icon="🌺"
-    )
-
-
 # ---- Role: administrator ----------------------------------------------------
 
 
@@ -77,15 +44,10 @@ def admin_home_nav():
     st.sidebar.page_link("pages/20_Admin_Home.py", label="System Admin", icon="🖥️")
 
 
-def ml_model_mgmt_nav():
-    st.sidebar.page_link(
-        "pages/21_ML_Model_Mgmt.py", label="ML Model Management", icon="🏢"
-    )
- 
 def manage_courts_nav():
     st.sidebar.page_link("pages/22_Manage_Courts.py", label="Manage Courts", icon="🏀")
- 
- 
+
+
 def moderate_reviews_nav():
     st.sidebar.page_link(
         "pages/23_Manage_Reviews.py", label="Moderate Reviews", icon="⭐"
@@ -117,14 +79,6 @@ def SideBarLinks(show_home=False):
         if st.session_state["role"] == "competitive_player":
             leaderboard_nav()
             tournaments_nav()
-
-        if st.session_state["role"] == "usaid_worker":
-            usaid_worker_home_nav()
-            ngo_directory_nav()
-            add_ngo_nav()
-            prediction_nav()
-            api_test_nav()
-            classification_nav()
 
         if st.session_state["role"] == "administrator":
             admin_home_nav()
