@@ -110,6 +110,21 @@ if "active_checkin_id" not in st.session_state:
 if "checked_in_court_id" not in st.session_state:
     st.session_state["checked_in_court_id"] = None
 
+# Verify the stored checkin is still active — reset if it was already checked out
+if st.session_state["active_checkin_id"] is not None:
+    try:
+        _r = requests.get(
+            f"{API_BASE}/court/courts/{st.session_state['checked_in_court_id']}/checkins",
+            timeout=5,
+        )
+        if _r.status_code == 200:
+            _active_ids = {c["CheckInId"] for c in _r.json()}
+            if st.session_state["active_checkin_id"] not in _active_ids:
+                st.session_state["active_checkin_id"] = None
+                st.session_state["checked_in_court_id"] = None
+    except Exception:
+        pass
+
 # ---------------------------------------------------------------------------
 # Data fetching helpers
 # ---------------------------------------------------------------------------
