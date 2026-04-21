@@ -122,7 +122,97 @@ def register_for_tournament(tournament_id, pid):
         logger.error(f"Failed to register for tournament {tournament_id}: {e}")
         return False, str(e)
 
-
+def build_bracket_html(matches):
+    """
+    Turns flat match rows from the API into a visual single-elimination
+    bracket rendered as an HTML/SVG component.
+    """
+    # ── Organise matches by round ──────────────────────────────────────────
+    rounds = {}
+    for m in matches:
+        r = m.get("RoundNumber", 1)
+        rounds.setdefault(r, {})
+        mid = m["MatchId"]
+        if mid not in rounds[r]:
+            rounds[r][mid] = {
+                "MatchId": mid,
+                "MatchStatus": m.get("MatchStatus", "Scheduled"),
+                "MatchOrder": m.get("MatchOrder", 1),
+                "players": [],
+            }
+        rounds[r][mid]["players"].append({
+            "name": m.get("PlayerName", "TBD"),
+            "is_winner": m.get("IsWinner", False),
+        })
+ 
+    sorted_rounds = sorted(rounds.keys())
+    num_rounds = len(sorted_rounds)
+ 
+    # ── Layout constants ───────────────────────────────────────────────────
+    CARD_W = 160
+    CARD_H = 36
+    GAP_X = 80          # horizontal space between rounds
+    COL_W = CARD_W + GAP_X
+    SLOT_H = 90         # vertical space allocated per match slot
+ 
+    # Figure out max matches in round 1 to size the SVG height
+    max_matches = max(len(v) for v in rounds.values()) if rounds else 1
+    first_round_matches = len(rounds[sorted_rounds[0]]) if sorted_rounds else 1
+    svg_height = max(300, first_round_matches * SLOT_H + 60)
+    svg_width = num_rounds * COL_W + 40
+ 
+    def slot_y(round_idx, match_idx, total_in_round):
+        """Centre y of a match card for a given round and position."""
+        spacing = svg_height / total_in_round
+        return spacing * match_idx + spacing / 2
+ 
+    # ── Build SVG ──────────────────────────────────────────────────────────
+    lines = []
+ 
+    # Background
+    lines.append(
+        f'<rect width="{svg_width}" height="{svg_height}" '
+        f'fill="#0F172A" rx="12"/>'
+    )
+ 
+    round_match_positions = {}   # round_num -> list of centre-y for each match
+ 
+    for col_idx, round_num in enumerate(sorted_rounds):
+        match_dict = rounds[round_num]
+        sorted_matches = sorted(match_dict.values(), key=lambda m: m["MatchOrder"])
+        total = len(sorted_matches)
+        x = col_idx * COL_W + 20
+ 
+        # Round label
+        label_x = x + CARD_W / 2
+        round_label = "Final" if col_idx == num_rounds - 1 else f"Round {round_num}"
+        lines.append(
+            f'<text x="{label_x}" y="18" text-anchor="middle" '
+            f'font-family="Outfit,sans-serif" font-size="10" '
+            f'fill="#475569" letter-spacing="1" '
+            f'text-transform="uppercase">{round_label.upper()}</text>'
+        )
+ 
+        centre_ys = []
+        for match_idx, match in enumerate(sorted_matches):
+            cy = slot_y(col_idx, match_idx, total)
+            centre_ys.append(cy)
+ 
+            players = match["players"]
+            status = match["MatchStatus"]
+ 
+            p1 = players[0] if len(players) > 0 else {"name": "TBD", "is_winner": False}
+            p2 = players[1] if len(players) > 1 else {"name": "TBD", "is_winner": False}
+ 
+            card_y = cy - CARD_H
+ 
+            # Card background
+            lines.append(
+                f'<rect x="{x}" y="{card_y}" width="{CARD_W}" '
+                f'height="{CARD_H * 2}" rx="8" '
+                f'fill="#1E293B" stroke="#334155" stroke-width="1"/>'
+            )
+ 
 # ---------------------------------------------------------------------------
 # Sidebar: player profile card
 # ---------------------------------------------------------------------------
