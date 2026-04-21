@@ -171,7 +171,7 @@ if st.button("Enter as Aaliyah", type="primary", use_container_width=True):
     st.session_state["first_name"] = "Aaliyah"
     st.session_state["player_id"] = 3
     logger.info("Logging in as Competitive Player Persona")
-    st.switch_page("pages/11_Leaderboard.py")
+    st.switch_page("pages/10_Competitive_Home.py")
 
 st.markdown(
     """
@@ -192,3 +192,23 @@ if st.button("Enter as Devon", type="primary", use_container_width=True):
     st.session_state["first_name"] = "Devon"
     logger.info("Logging in as System Administrator Persona")
     st.switch_page("pages/20_Admin_Home.py")
+
+st.markdown(
+    """
+    <div class="persona-card">
+        <div class="persona-avatar">PN</div>
+        <div class="persona-info">
+            <p class="persona-name">Priya Nair</p>
+            <p class="persona-role">Data Analyst</p>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+if st.button("Enter as Priya", type="primary", use_container_width=True):
+    st.session_state["authenticated"] = True
+    st.session_state["role"] = "data_analyst"
+    st.session_state["first_name"] = "Priya"
+    logger.info("Logging in as Data Analyst Persona")
+    st.switch_page("pages/40_Analyst_Profile.py")
