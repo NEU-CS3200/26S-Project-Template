@@ -172,6 +172,8 @@ def build_bracket_html(matches):
  
     # ── Step 1: Deduplicate players within Round 1 ────────────────────────
     # Each player can only appear in one match per round.
+    # If the deduped player was the winner, flip the win to their opponent
+    # so the match still produces a valid winner for bracket advancement.
     sorted_round_keys = sorted(rounds.keys())
     if sorted_round_keys:
         first_round = sorted_round_keys[0]
@@ -180,12 +182,20 @@ def build_bracket_html(matches):
                           key=lambda x: rounds[first_round][x]["MatchOrder"]):
             match = rounds[first_round][mid]
             cleaned = []
+            flip_winner = False
             for p in match["players"]:
                 if p["name"] not in seen:
                     seen.add(p["name"])
                     cleaned.append(p)
                 else:
+                    if p["is_winner"]:
+                        flip_winner = True
                     cleaned.append({"name": "TBD", "is_winner": False})
+            # Give the win to the real opponent if winner was deduped
+            if flip_winner:
+                for p in cleaned:
+                    if p["name"] != "TBD":
+                        p["is_winner"] = True
             match["players"] = cleaned
  
     # ── Step 2: Collect Round 1 winners in bracket order ──────────────────
