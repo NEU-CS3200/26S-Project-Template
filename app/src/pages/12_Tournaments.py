@@ -455,64 +455,27 @@ else:
     def show_bracket(tournament_id, tournament_name):
         st.subheader(tournament_name)
         matches = fetch_brackets(tournament_id)
-
+ 
         if not matches:
             st.info("No bracket data available yet.")
             return
-
-        # Group by round
-        rounds = {}
-        for m in matches:
-            r = m.get("RoundNumber", 1)
-            rounds.setdefault(r, []).append(m)
-
-        for round_num in sorted(rounds.keys()):
-            st.markdown(
-                f'<div class="bracket-round-label">Round {round_num}</div>',
-                unsafe_allow_html=True,
-            )
-            round_matches = rounds[round_num]
-
-            # Deduplicate by MatchId (two rows per match due to self-join)
-            seen = {}
-            for m in round_matches:
-                mid = m["MatchId"]
-                if mid not in seen:
-                    seen[mid] = m
-
-            for match in seen.values():
-                player_name = match.get("PlayerName", "TBD")
-                opponent_name = match.get("OpponentName", "TBD")
-                is_winner = match.get("IsWinner")
-                status = match.get("MatchStatus", "Scheduled")
-
-                if status == "Completed":
-                    p_class = "bracket-match-winner" if is_winner else "bracket-match-loser"
-                    o_class = "bracket-match-loser" if is_winner else "bracket-match-winner"
-                else:
-                    p_class = "bracket-match-pending"
-                    o_class = "bracket-match-pending"
-
-                with st.container(border=True):
-                    c1, c2, c3 = st.columns([4, 1, 4])
-                    with c1:
-                        st.markdown(
-                            f'<span class="{p_class}">{player_name}</span>',
-                            unsafe_allow_html=True,
-                        )
-                    with c2:
-                        st.markdown(
-                            "<div style='text-align:center;color:#475569;font-size:0.8rem;'>vs</div>",
-                            unsafe_allow_html=True,
-                        )
-                    with c3:
-                        st.markdown(
-                            f'<span class="{o_class}">{opponent_name}</span>',
-                            unsafe_allow_html=True,
-                        )
-
-            st.markdown("")
-
+ 
+        html, height = build_bracket_html(matches)
+        components.html(html, height=height, scrolling=True)
+ 
+        # Legend
+        st.markdown(
+            """
+            <div style="display:flex;gap:20px;margin-top:8px;
+                        font-family:'Outfit',sans-serif;font-size:0.75rem;">
+                <span style="color:#4ADE80;">● Winner</span>
+                <span style="color:#475569;">● Eliminated</span>
+                <span style="color:#94A3B8;">● Pending</span>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+ 
     # ---------------------------------------------------------------------------
     # Tournament cards
     # ---------------------------------------------------------------------------
