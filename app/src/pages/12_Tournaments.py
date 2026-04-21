@@ -583,7 +583,6 @@ else:
     def show_bracket(tournament_id, tournament_name):
         st.subheader(tournament_name)
         matches = fetch_brackets(tournament_id)
-        st.json(matches)
  
         if not matches:
             st.info("No bracket data available yet.")
