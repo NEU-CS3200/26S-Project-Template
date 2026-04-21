@@ -87,10 +87,6 @@ def analyst_heatmap_nav():
     st.sidebar.page_link("pages/42_Analyst_Heatmap.py", label="Heatmap", icon="🗺️")
 
 
-def analyst_courts_nav():
-    st.sidebar.page_link("pages/43_Analyst_Courts.py", label="Court Details", icon="🏀")
-
-
 def analyst_csv_nav():
     st.sidebar.page_link("pages/44_Analyst_CSV.py", label="CSV Export", icon="📥")
 
@@ -134,7 +130,6 @@ def SideBarLinks(show_home=False):
             analyst_overview_nav()
             analyst_dashboard_nav()
             analyst_heatmap_nav()
-            analyst_courts_nav()
             analyst_csv_nav()
 
     if st.session_state["authenticated"]:
