@@ -51,8 +51,8 @@ st.title("My Game History")
 st.caption("All your recent games and results")
 
 if player_data:
-    total = player_data.get("GamesPlayed", 0)
-    wins = player_data.get("Wins", 0)
+    total = int(player_data.get("GamesPlayed", 0) or 0)
+    wins = int(player_data.get("Wins", 0) or 0)
     losses = total - wins if total > 0 else 0
     win_rate = round((wins / total) * 100) if total > 0 else 0
 
