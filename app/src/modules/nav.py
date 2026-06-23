@@ -12,68 +12,110 @@ def home_nav():
 
 
 def about_page_nav():
-    st.sidebar.page_link("pages/30_About.py", label="About", icon="🧠")
+    st.sidebar.page_link("pages/40_About.py", label="About", icon="🧠")
 
 
-# ---- Role: pol_strat_advisor ------------------------------------------------
-
-def pol_strat_home_nav():
+# ---- Role: job_seeker (Sarah) -----------------------------------------------
+ 
+def job_seeker_home_nav():
     st.sidebar.page_link(
-        "pages/00_Pol_Strat_Home.py", label="Political Strategist Home", icon="👤"
+        "pages/42_Job_Seeker_Home.py", label="Job Seeker Home", icon="👤"
     )
 
 
-def world_bank_viz_nav():
+def browse_jobs_nav():
     st.sidebar.page_link(
-        "pages/01_World_Bank_Viz.py", label="World Bank Visualization", icon="🏦"
+        "pages/41_Browse_Jobs.py", label="Browse Jobs", icon="🔍"
     )
 
 
-def map_demo_nav():
-    st.sidebar.page_link("pages/02_Map_Demo.py", label="Map Demonstration", icon="🗺️")
-
-
-# ---- Role: usaid_worker -----------------------------------------------------
-
-def usaid_worker_home_nav():
+def my_applications_nav():
     st.sidebar.page_link(
-        "pages/10_USAID_Worker_Home.py", label="USAID Worker Home", icon="🏠"
+        "pages/43_My_Applications.py", label="My Applications", icon="📋"
     )
 
 
-def ngo_directory_nav():
-    st.sidebar.page_link("pages/14_NGO_Directory.py", label="NGO Directory", icon="📁")
-
-
-def add_ngo_nav():
-    st.sidebar.page_link("pages/15_Add_NGO.py", label="Add New NGO", icon="➕")
-
-
-def prediction_nav():
+def my_profile_nav():
     st.sidebar.page_link(
-        "pages/11_Prediction.py", label="Regression Prediction", icon="📈"
+        "pages/44_My_Profile.py", label="My Profile", icon="📝"
+    )
+
+# ---- Role: job_poster (Tom) -------------------------------------------------
+ 
+def job_poster_home_nav():
+    st.sidebar.page_link(
+        "pages/10_Job_Poster_Home.py", label="Job Poster Home", icon="🏢"
+    )
+ 
+ 
+def manage_posts_nav():
+    st.sidebar.page_link(
+        "pages/11_Manage_Job_Posts.py", label="Manage Job Posts", icon="📌"
+    )
+ 
+ 
+def view_applications_nav():
+    st.sidebar.page_link(
+        "pages/12_View_Applications.py", label="View Applications", icon="👥"
+    )
+ 
+ 
+def post_limits_nav():
+    st.sidebar.page_link(
+        "pages/13_Job_Limits.py", label="Job Limits", icon="⚙️"
     )
 
 
-def api_test_nav():
-    st.sidebar.page_link("pages/12_API_Test.py", label="Test the API", icon="🛜")
-
-
-def classification_nav():
+ 
+# ---- Role: data_analyst (Lauren) --------------------------------------------
+ 
+def data_analyst_home_nav():
     st.sidebar.page_link(
-        "pages/13_Classification.py", label="Classification Demo", icon="🌺"
+        "pages/20_Data_Analyst_Home.py", label="Data Analyst Home", icon="📊"
     )
-
-
-# ---- Role: administrator ----------------------------------------------------
-
+ 
+ 
+def analytics_dashboard_nav():
+    st.sidebar.page_link(
+        "pages/21_Analytics_Dashboard.py", label="Analytics Dashboard", icon="📈"
+    )
+ 
+ 
+def application_trends_nav():
+    st.sidebar.page_link(
+        "pages/22_Application_Trends.py", label="Application Trends", icon="📉"
+    )
+ 
+ 
+def data_reports_nav():
+    st.sidebar.page_link(
+        "pages/23_Data_Reports.py", label="Data Reports", icon="📑"
+    )
+ 
+ 
+# ---- Role: administrator (Alex) ---------------------------------------------
+ 
 def admin_home_nav():
-    st.sidebar.page_link("pages/20_Admin_Home.py", label="System Admin", icon="🖥️")
-
-
-def ml_model_mgmt_nav():
     st.sidebar.page_link(
-        "pages/21_ML_Model_Mgmt.py", label="ML Model Management", icon="🏢"
+        "pages/30_Admin_Home.py", label="Admin Home", icon="🖥️"
+    )
+ 
+ 
+def user_management_nav():
+    st.sidebar.page_link(
+        "pages/31_User_Management.py", label="User Management", icon="👨‍💻"
+    )
+ 
+ 
+def system_logs_nav():
+    st.sidebar.page_link(
+        "pages/32_System_Logs.py", label="System Logs", icon="📜"
+    )
+ 
+ 
+def admin_reports_nav():
+    st.sidebar.page_link(
+        "pages/33_Admin_Management.py", label="Admin Management", icon="🗂️"
     )
 
 
@@ -111,9 +153,30 @@ def SideBarLinks(show_home=False):
             api_test_nav()
             classification_nav()
 
+        if st.session_state["role"] == "job_seeker":
+            job_seeker_home_nav()
+            browse_jobs_nav()
+            my_applications_nav()
+            my_profile_nav()
+
+ 
+        if st.session_state["role"] == "job_poster":
+            job_poster_home_nav()
+            manage_posts_nav()
+            view_applications_nav()
+            post_limits_nav()
+ 
+        if st.session_state["role"] == "data_analyst":
+            data_analyst_home_nav()
+            analytics_dashboard_nav()
+            application_trends_nav()
+            data_reports_nav()
+ 
         if st.session_state["role"] == "administrator":
             admin_home_nav()
-            ml_model_mgmt_nav()
+            user_management_nav()
+            system_logs_nav()
+            admin_reports_nav()
 
     # About link appears at the bottom for all roles
     about_page_nav()
