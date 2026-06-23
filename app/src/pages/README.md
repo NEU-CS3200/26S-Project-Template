@@ -1,7 +1,14 @@
 # `pages` Folder
 
-This folder contains all the pages that will be part of the application. Details on required numbers will be provided in the Phase 3 documentation.
+This folder contains Phase 1 Streamlit pages for GameGoats.
 
-These pages are meant to show you an example of some of the features of Streamlit and the way we will limit functionality access by role/persona. It is not meant to represent a complete application.
+- `00_*`: player-facing setup landing page
+- `10_*`: moderator-facing setup landing page
+- `14_Container_Status.py`: Docker/API/database connectivity checks
+- `15_REST_API_Scope.py`: REST API scope summary
+- `16_Branching_Rules.py`: branching strategy summary
+- `20_*`: admin setup landing page
+- `21_Phase1_Checklist.py`: Phase 1 checklist
+- `30_*`: project about page
 
-TODO: Describe the pages folder and include link to documentation. Don't forget about ordering of pages.
+Page prefixes are intentional because Streamlit orders pages alphabetically.

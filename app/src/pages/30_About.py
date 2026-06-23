@@ -1,23 +1,22 @@
 import streamlit as st
+
 from modules.nav import SideBarLinks
 
-st.set_page_config(layout='wide')
-
+st.set_page_config(layout="wide")
 SideBarLinks()
 
-st.write("# About this App")
-
+st.write("# About GameGoats")
 st.markdown(
     """
-    This is a demo app for Data and Software in International Government and Politics Dialogue 2025 Project Course.  
+    GameGoats is a team project for managing game-community signals and safety operations.
 
-    The goal of this demo is to provide information on the tech stack 
-    being used as well as demo some of the features of the various platforms. 
-
-    Stay tuned for more information and features to come!
+    In Phase 1, this repository focuses on:
+    - consistent local startup with Docker,
+    - shared branch workflow,
+    - locked REST route/resource scope,
+    - cleaned template baseline for future implementation.
     """
 )
 
-# Add a button to return to home page
 if st.button("Return to Home", type="primary"):
     st.switch_page("Home.py")
