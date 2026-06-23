@@ -15,65 +15,95 @@ def about_page_nav():
     st.sidebar.page_link("pages/30_About.py", label="About", icon="🧠")
 
 
-# ---- Role: pol_strat_advisor ------------------------------------------------
+# ---- Role: artist ------------------------------------------------
 
-def pol_strat_home_nav():
+def artist_home_nav():
     st.sidebar.page_link(
-        "pages/00_Pol_Strat_Home.py", label="Political Strategist Home", icon="👤"
+        "pages/00_Artist_Home.py", label="Artist Home", icon="👤"
     )
 
 
-def world_bank_viz_nav():
+def artist_library_nav():
     st.sidebar.page_link(
-        "pages/01_World_Bank_Viz.py", label="World Bank Visualization", icon="🏦"
+        "pages/01_Artist_Library.py", label="Artist Library", icon="📚"
     )
 
 
-def map_demo_nav():
-    st.sidebar.page_link("pages/02_Map_Demo.py", label="Map Demonstration", icon="🗺️")
-
-
-# ---- Role: usaid_worker -----------------------------------------------------
-
-def usaid_worker_home_nav():
+def artist_stats_nav():
     st.sidebar.page_link(
-        "pages/10_USAID_Worker_Home.py", label="USAID Worker Home", icon="🏠"
+        "pages/02_Artist_Stats.py", label="Artist Stats", icon="📊"
     )
 
 
-def ngo_directory_nav():
-    st.sidebar.page_link("pages/14_NGO_Directory.py", label="NGO Directory", icon="📁")
 
+# ---- Role: label_head -------------------------------------------------------
 
-def add_ngo_nav():
-    st.sidebar.page_link("pages/15_Add_NGO.py", label="Add New NGO", icon="➕")
-
-
-def prediction_nav():
+def label_head_home_nav():
     st.sidebar.page_link(
-        "pages/11_Prediction.py", label="Regression Prediction", icon="📈"
+        "pages/30_Label_Head_Home.py", label="Label Head Home", icon="🎵"
     )
 
 
-def api_test_nav():
-    st.sidebar.page_link("pages/12_API_Test.py", label="Test the API", icon="🛜")
-
-
-def classification_nav():
+def royalty_splits_nav():
     st.sidebar.page_link(
-        "pages/13_Classification.py", label="Classification Demo", icon="🌺"
+        "pages/31_Royalty_Splits.py", label="Royalty Splits", icon="💸"
     )
 
+
+def asset_tracker_nav():
+    st.sidebar.page_link(
+        "pages/32_Asset_Tracker.py", label="Asset Tracker", icon="📂"
+    )
+
+
+def release_overview_nav():
+    st.sidebar.page_link(
+        "pages/33_Release_Overview.py", label="Release Overview", icon="📀"
+    )
+
+
+def artist_leaderboard_nav():
+    st.sidebar.page_link(
+        "pages/34_Artist_Leaderboard.py", label="Artist Leaderboard", icon="🏆"
+    )
+
+# ---- Role: data_analyst -----------------------------------------------------
+
+def data_analyst_home_nav():
+    st.sidebar.page_link("pages/10_Data_Analyst_Home.py", label="Analyst Dashboard", icon="📊")
+
+def data_analyst_platform_nav():
+    st.sidebar.page_link("pages/11_Platform_Performance.py", label="Platform Metrics", icon="💻")
+
+def data_analyst_locations_nav():
+    st.sidebar.page_link("pages/12_Listener_Locations.py", label="Listener Locations", icon="🗺️")
+
+def data_analyst_engagement_nav():
+    st.sidebar.page_link("pages/13_Track_Engagement.py", label="Track Engagement", icon="⏭️")
 
 # ---- Role: administrator ----------------------------------------------------
 
-def admin_home_nav():
-    st.sidebar.page_link("pages/20_Admin_Home.py", label="System Admin", icon="🖥️")
-
-
-def ml_model_mgmt_nav():
+def system_admin_home_nav():
     st.sidebar.page_link(
-        "pages/21_ML_Model_Mgmt.py", label="ML Model Management", icon="🏢"
+        "pages/20_System_Admin_Home.py", label="System Admin Home", icon="🖥️"
+    )
+
+
+def system_logs_nav():
+    st.sidebar.page_link(
+        "pages/22_System_Logs.py", label="System Logs", icon="🚨"
+    )
+
+
+def help_requests_nav():
+    st.sidebar.page_link(
+        "pages/23_Help_Requests.py", label="Help Requests", icon="🎟️"
+    )
+
+
+def platform_monitor_nav():
+    st.sidebar.page_link(
+        "pages/24_Platform_Monitor.py", label="Platform Monitor", icon="📊"
     )
 
 
@@ -86,7 +116,7 @@ def SideBarLinks(show_home=False):
     """
 
     # Logo appears at the top of the sidebar on every page
-    st.sidebar.image("assets/logo.png", width=150)
+    st.sidebar.image("assets/brand/audiovate_logo.png", width=150)
 
     # If no one is logged in, send them to the Home (login) page
     if "authenticated" not in st.session_state:
@@ -98,22 +128,31 @@ def SideBarLinks(show_home=False):
 
     if st.session_state["authenticated"]:
 
-        if st.session_state["role"] == "pol_strat_advisor":
-            pol_strat_home_nav()
-            world_bank_viz_nav()
-            map_demo_nav()
+        if st.session_state["role"] == "artist":
+            artist_home_nav()
+            artist_library_nav()
+            artist_stats_nav()
+        
 
-        if st.session_state["role"] == "usaid_worker":
-            usaid_worker_home_nav()
-            ngo_directory_nav()
-            add_ngo_nav()
-            prediction_nav()
-            api_test_nav()
-            classification_nav()
+        if st.session_state["role"] == "label_head":
+            label_head_home_nav()
+            royalty_splits_nav()
+            asset_tracker_nav()
+            release_overview_nav()
+            artist_leaderboard_nav()
 
         if st.session_state["role"] == "administrator":
-            admin_home_nav()
-            ml_model_mgmt_nav()
+            system_admin_home_nav()
+            system_logs_nav()
+            help_requests_nav()
+            platform_monitor_nav()
+
+        
+        if st.session_state["role"] == "data_analyst":
+            data_analyst_home_nav()
+            data_analyst_platform_nav()
+            data_analyst_locations_nav()
+            data_analyst_engagement_nav()
 
     # About link appears at the bottom for all roles
     about_page_nav()
